@@ -69,8 +69,8 @@ export const LoginWithSocial = ({ text = "Login with" }: { text?: string }) => {
           <SocialIcon icon={<FacebookLogo height={38} width={38} />} />
         </div>
       </div>
-      <div className="relative flex w-full justify-center items-center  h-full">
-        <div className="border-b border-pennywyz-ash-t2 w-full"></div>
+      <div className="relative flex items-center justify-center w-full h-full">
+        <div className="w-full border-b border-pennywyz-ash-t2"></div>
         <Typography
           text="or continue with"
           size={12}
