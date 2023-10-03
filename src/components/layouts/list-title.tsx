@@ -15,11 +15,10 @@ export const ListTitle = () => {
 
   return (
     <div className="flex items-center justify-between">
-      <section className="flex  items-center gap-3">
+      <section className="flex items-center gap-3">
         <input
           placeholder="Untitled"
           style={{ width: width - 1 + "ch", minWidth: "6ch" }}
-          autoFocus
           onBlur={handleKeyDown}
           value={value}
           onKeyDown={handleKeyDown}

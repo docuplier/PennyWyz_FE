@@ -12,6 +12,7 @@ import {
 import { Popover, PopoverContent } from "#/components/ui/popover";
 import { Check, PlusIcon } from "lucide-react";
 import { PopoverAnchor } from "@radix-ui/react-popover";
+import { useRouter } from "next/router";
 
 const frameworks = [
   {
@@ -28,7 +29,13 @@ const frameworks = [
   },
 ];
 
-export const SearchBar = () => {
+export const SearchBar = ({
+  navigationPath,
+  placeholder = "Create a New List",
+}: {
+  navigationPath?: string;
+  placeholder?: string;
+}) => {
   const [open, setOpen] = React.useState(false);
   const [value, setValue] = React.useState("");
 
@@ -47,6 +54,8 @@ export const SearchBar = () => {
 
   const selectWidth = ref.current?.clientWidth || 300;
 
+  const router = useRouter();
+
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
@@ -57,9 +66,14 @@ export const SearchBar = () => {
           >
             <Command>
               <CommandInput
-                autoFocus
+                onFocus={() => {
+                  if (navigationPath) {
+                    router.push(navigationPath);
+                  }
+                }}
+                className="text-[16px]"
                 ref={searchRef}
-                placeholder="Search framework..."
+                placeholder={placeholder}
                 onValueChange={handleSearchValue}
                 value={searchValue}
               />
@@ -80,7 +94,7 @@ export const SearchBar = () => {
           </div>
         </PopoverAnchor>
         <PopoverContent
-          className=" max-w-full p-0 -translate-y-2"
+          className="max-w-full p-0 -translate-y-2 "
           style={{ width: `${selectWidth}px` }}
           autoFocus={false}
           onOpenAutoFocus={(e) => {

@@ -6,6 +6,7 @@ import { useDialog } from "#/hooks/use-dialog";
 import { useAuthContext } from "#/contexts/auth-context";
 import { AuthViewEnums } from "../views/auth/auth-dialog";
 import { cn } from "#/lib/utils";
+import Link from "next/link";
 
 const Header = ({ className }: { className?: string }) => {
   const { openAuthDialog } = useAuthContext();
@@ -15,7 +16,7 @@ const Header = ({ className }: { className?: string }) => {
       <div
         className={cn("pt-[20px] flex justify-between items-center", className)}
       >
-        <section className="flex items-center gap-2">
+        <Link href={"/"} className="flex items-center gap-2">
           <PennyWyzLogo />
           <Typography
             text="PennyWyz"
@@ -23,7 +24,7 @@ const Header = ({ className }: { className?: string }) => {
             as="h3"
             className="font-semibold"
           />
-        </section>
+        </Link>
         <section className="flex items-center gap-2">
           <button
             onClick={() => openAuthDialog()}

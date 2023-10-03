@@ -94,7 +94,10 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
             }}
           >
             <CheckBox id={"checkbox"} />
-            <Typography text="Milo Instant Malt Chocolate Drinking Powder Tin 400g" />
+            <Typography
+              text="Milo Instant Malt Chocolate Drinking Powder Tin 400g"
+              className="flex-1"
+            />
             <div className="flex-none flex flex-col items-end gap-[5px]">
               <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
                 <Typography text="4" size={10} />

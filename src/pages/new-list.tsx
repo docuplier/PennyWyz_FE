@@ -12,27 +12,33 @@ import { InfoItem } from "#/components/reusables/info-item";
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 
-export default function Home() {
+export default function NewList() {
   const [listItem, setListItem] = useState([1, 2, 3]);
 
   const handleDelete = (selectedItem: number) => {
-    console.log({ selectedItem });
     const undeletedList = listItem.filter((item) => item !== selectedItem);
     setListItem(undeletedList);
   };
 
   return (
     <>
-      <AppLayout
-        desktopHeader={
-          <div className="pt-[38px]">
-            <Hero isDesktop />
-          </div>
-        }
-        mobileHeader={<Hero />}
-      >
+      <AppLayout>
+        <section className="space-y-[20px] mb-[20px] mt-[20px]">
+          <ListTitle />
+          <TotalHeader />
+        </section>
         <div className="w-full">
-          <SearchBar navigationPath="new-list" />
+          <div className="mt-[20px] space-y-2">
+            <AnimatePresence>
+              {listItem.map((v) => (
+                <ListItem key={v} handleDelete={() => handleDelete(v)} />
+              ))}
+            </AnimatePresence>
+            <SearchBar placeholder="New item" />
+          </div>
+        </div>
+        <div className="py-[20px] flex justify-center">
+          <InfoItem text="Swipe Right to increase quantity & Left to delete" />
         </div>
       </AppLayout>
     </>
