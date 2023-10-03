@@ -86,11 +86,13 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
             setIsDragging(true);
           }}
           className="w-full bg-pennywyz-ash-t1 rounded-[8px] pt-[6px] pb-[2px] px-[2px] relative z-30"
-          onClick={() => {
-            setIsExpanded(!isExpanded);
-          }}
         >
-          <div className="flex items-center gap-[10px] px-[8px] ">
+          <div
+            className="flex items-center gap-[10px] px-[8px] "
+            onClick={() => {
+              setIsExpanded(!isExpanded);
+            }}
+          >
             <CheckBox id={"checkbox"} />
             <Typography text="Milo Instant Malt Chocolate Drinking Powder Tin 400g" />
             <div className="flex-none flex flex-col items-end gap-[5px]">
