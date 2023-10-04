@@ -1,4 +1,4 @@
-import { ReactNode, useState } from "react";
+import { ReactNode, useRef, useState } from "react";
 import { CheckBox } from "./checkbox";
 import { Typography } from "./typography";
 import { motion, AnimatePresence } from "framer-motion";
@@ -33,6 +33,7 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
   const { open: openDeleteDialog, toggleDialog: toggleDeleteDialog } =
     useDialog();
+  const checkboxRef = useRef<any>();
 
   const [quantity, setQuantity] = useState(0);
 
@@ -89,11 +90,14 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
         >
           <div
             className="flex items-center gap-[10px] px-[8px] "
-            onClick={() => {
-              setIsExpanded(!isExpanded);
+            onClick={(e) => {
+              if (!checkboxRef?.current?.contains(e.target))
+                setIsExpanded(!isExpanded);
             }}
           >
-            <CheckBox id={"checkbox"} />
+            <div ref={checkboxRef}>
+              <CheckBox id={"checkbox"} />
+            </div>
             <Typography
               text="Milo Instant Malt Chocolate Drinking Powder Tin 400g"
               className="flex-1"
@@ -108,12 +112,18 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
           <AnimatePresence>
             {isExpanded && (
               <motion.div
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-                exit={{ height: 0 }}
-                transition={{ type: "spring", duration: 0.6, bounce: 0 }}
+                initial={{ height: 0, opacity: 0, overflow: "hidden" }}
+                animate={{ height: "auto", opacity: 1, overflow: "none" }}
+                exit={{ height: 0, opacity: 0, overflow: "hidden" }}
+                transition={{ type: "spring", duration: 0.6 }}
               >
-                <div className="w-full bg-white py-[10px] grid grid-cols-2 mt-[8px] rounded-b-[8px] !overflow-hidden">
+                <div
+                  className={cn(
+                    isExpanded
+                      ? "w-full bg-white !py-[10px] grid grid-cols-2 mt-[8px] rounded-b-[8px] !overflow-hidden"
+                      : ""
+                  )}
+                >
                   <button className="text-[12px]" onClick={toggleDialog}>
                     Quantity
                   </button>
