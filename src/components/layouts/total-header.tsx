@@ -11,12 +11,13 @@ export const TotalHeader = () => {
       : `${selectedProductsArray.length} Items`;
   return (
     <div className="flex items-center justify-between">
-      <Typography text={totalText} size={12} />
+      <Typography text={totalText} size={12} suppressHydrationWarning />
       <section className="flex items-center gap-2">
         <Typography text="Total Budget" size={12} />
         <Typography
           text={formatNumberToCurrency({ number: selectedProductsTotal })}
           size={16}
+          suppressHydrationWarning
         />
       </section>
     </div>

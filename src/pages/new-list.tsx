@@ -12,14 +12,9 @@ import { InfoItem } from "#/components/reusables/info-item";
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useProductsContext } from "#/contexts/product-context";
+import { CSRWrapper } from "#/components/layouts/CSRWrapper";
 
 export default function NewList() {
-  // const [listItem, setListItem] = useState([1, 2, 3]);
-
-  // const handleDelete = (selectedItem: number) => {
-  //   const undeletedList = listItem.filter((item) => item !== selectedItem);
-  //   setListItem(undeletedList);
-  // };
   const { selectedProducts } = useProductsContext();
 
   return (
@@ -31,15 +26,17 @@ export default function NewList() {
         </section>
         <div className="w-full">
           <div className="mt-[20px] space-y-2">
-            <AnimatePresence>
-              {Object.values(selectedProducts).map((v) => (
-                <ListItem
-                  key={v.id}
-                  product={v}
-                  handleDelete={() => console.log("ann")}
-                />
-              ))}
-            </AnimatePresence>
+            <CSRWrapper>
+              <AnimatePresence>
+                {Object.values(selectedProducts).map((v) => (
+                  <ListItem
+                    key={v.id}
+                    product={v}
+                    handleDelete={() => console.log("ann")}
+                  />
+                ))}
+              </AnimatePresence>
+            </CSRWrapper>
             <SearchBar placeholder="New item" />
           </div>
         </div>

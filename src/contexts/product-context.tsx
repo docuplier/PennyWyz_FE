@@ -26,9 +26,9 @@ const ProductsContext = createContext<ProductsContextType>(
   {} as ProductsContextType
 );
 
-const { getFromStore, clearStore, addToStore } = AppStorage();
-
 const SEARCH_SUGGESTION_LENGTH = 3;
+
+const { getFromStore, clearStore, addToStore } = AppStorage();
 
 export function ProductsProvider({ children }: { children: ReactNode }) {
   const [searchValue, setSearchValue] = React.useState("");
@@ -37,7 +37,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
 
   const [selectedProducts, setSelectedProducts] = React.useState<{
     [key in string]: IProduct;
-  }>({});
+  }>(getFromStore("USER_PRODUCTS") ?? {});
 
   const selectedProductsArray = useMemo(() => {
     return Object.values(selectedProducts);
@@ -64,12 +64,15 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
 
     if (isPresent) {
       delete duplicatedProducts[parsedProduct.id];
+      addToStore("USER_PRODUCTS", duplicatedProducts);
       setSelectedProducts(duplicatedProducts);
     } else {
-      setSelectedProducts({
+      const newProducts = {
         ...duplicatedProducts,
         [parsedProduct.id]: { ...parsedProduct, quantity: 1 },
-      });
+      };
+      addToStore("USER_PRODUCTS", newProducts);
+      setSelectedProducts(newProducts);
     }
     setOpen(false);
   };
@@ -102,14 +105,14 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
           ? selectedProduct.quantity
           : selectedProduct.quantity - 1;
     }
+    addToStore("USER_PRODUCTS", newProducts);
     setSelectedProducts(newProducts);
   };
 
   const handleProductDelete = ({ productId }: { productId: string }) => {
     const newProducts = { ...selectedProducts };
-
     delete newProducts[productId];
-
+    addToStore("USER_PRODUCTS", newProducts);
     setSelectedProducts(newProducts);
   };
 

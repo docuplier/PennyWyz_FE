@@ -1,3 +1,5 @@
+import { STORAGE_KEYS } from "./storageKeys";
+
 export const isJsonString = (str: string) => {
   try {
     const result = JSON.parse(str);
@@ -27,6 +29,8 @@ export interface IAppStorage {
   storageType?: keyof typeof STORAGE_TYPE;
 }
 
+export type TStoreKeys = keyof typeof STORAGE_KEYS;
+
 export const AppStorage = ({
   storageType = "LOCAL_STORAGE",
 }: IAppStorage = {}) => {
@@ -34,27 +38,27 @@ export const AppStorage = ({
 
   const addKey = (key: string) => `${APP_KEY}_${key}`;
 
-  const getFromStore = (key: string) => {
+  const getFromStore = (key: TStoreKeys) => {
     const result = storage?.getItem(addKey(key));
     if (!result) return result;
     const isJson = isJsonString(result);
     return isJson ? JSON.parse(result) : result;
   };
 
-  const addToStore = (key: string, value: any) => {
+  const addToStore = (key: TStoreKeys, value: any) => {
     storage?.setItem(
       addKey(key),
       typeof value === "object" ? JSON.stringify(value) : value
     );
   };
 
-  const removeFromStore = (key: string) => {
+  const removeFromStore = (key: TStoreKeys) => {
     storage?.removeItem(addKey(key));
   };
 
   const removeMultipleFromStore = (records: string[]) => {
     for (const key of records) {
-      removeFromStore(key);
+      removeFromStore(key as TStoreKeys);
     }
   };
 
@@ -62,11 +66,11 @@ export const AppStorage = ({
     const recordKeys = Object.keys(records);
     for (const key of recordKeys) {
       const value = records[key];
-      addToStore(key, value);
+      addToStore(key as TStoreKeys, value);
     }
   };
 
-  const getMultipleFromStore = (records: string[]) => {
+  const getMultipleFromStore = (records: TStoreKeys[]) => {
     const result = [];
     for (const key of records) {
       const value = getFromStore(key);

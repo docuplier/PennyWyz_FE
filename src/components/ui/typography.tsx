@@ -5,6 +5,7 @@ export type TypographyType = {
   text: string | ReactNode;
   size?: number;
   className?: string;
+  suppressHydrationWarning?: boolean;
 };
 
 export const Typography = ({
@@ -12,11 +13,16 @@ export const Typography = ({
   text,
   size = 14,
   className,
+  suppressHydrationWarning = false,
 }: TypographyType) => {
   const Comp = as;
 
   return (
-    <Comp className={className} style={{ fontSize: `${size / 16}rem` }}>
+    <Comp
+      className={className}
+      style={{ fontSize: `${size / 16}rem` }}
+      suppressHydrationWarning={suppressHydrationWarning}
+    >
       {text}
     </Comp>
   );

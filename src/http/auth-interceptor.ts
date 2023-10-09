@@ -1,5 +1,5 @@
-import { ENV_KEYS, STORAGE_KEYS } from "#/data";
 import { getCookie } from "#/lib/appCookie";
+import { STORAGE_KEYS } from "#/lib/storageKeys";
 import { AxiosInstance } from "axios";
 
 export const applyAuthInterceptor = (axiosInstance: AxiosInstance) => {
