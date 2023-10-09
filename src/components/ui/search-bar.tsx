@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { cn } from "#/lib/utils";
-import { Button } from "#/components/ui/button";
 import {
   Command,
   CommandEmpty,
@@ -13,21 +12,7 @@ import { Popover, PopoverContent } from "#/components/ui/popover";
 import { Check, PlusIcon } from "lucide-react";
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import { useRouter } from "next/router";
-
-const frameworks = [
-  {
-    value: "next.js",
-    label: "Milo Instant Chocolate Drinking Powder Tin 400g",
-  },
-  {
-    value: "sveltekit",
-    label: "Milo Instant Chocolate Drinking Powder Tin 400g",
-  },
-  {
-    value: "nuxt.js",
-    label: "Milo Instant Chocolate Drinking Powder Tin 400g",
-  },
-];
+import { useProductsContext } from "#/contexts/product-context";
 
 export const SearchBar = ({
   navigationPath,
@@ -36,23 +21,21 @@ export const SearchBar = ({
   navigationPath?: string;
   placeholder?: string;
 }) => {
-  const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState("");
-
-  const [searchValue, setSearchValue] = React.useState("");
-  const searchRef = React.useRef<any>();
-
-  const handleSearchValue = (search: string) => {
-    if (!open) {
-      setOpen(true);
-    }
-
-    setSearchValue(search);
-  };
-
   const ref = React.useRef<any>();
-
   const selectWidth = ref.current?.clientWidth || 300;
+  const {
+    open,
+    setOpen,
+    handleSearchValue,
+    searchValue,
+    getProducts,
+    handleSelect,
+    selectedProducts,
+  } = useProductsContext();
+  const {
+    paginatedFetch: { concatenatedData, isFetchingNextPage },
+    scrollRef,
+  } = getProducts;
 
   const router = useRouter();
 
@@ -72,25 +55,16 @@ export const SearchBar = ({
                   }
                 }}
                 className="text-[16px]"
-                ref={searchRef}
+                // ref={searchRef}
                 placeholder={placeholder}
                 onValueChange={handleSearchValue}
                 value={searchValue}
+                onClick={() => {
+                  setOpen(true);
+                }}
               />
             </Command>
             <PlusIcon className="ml-2 w-[24px] shrink-0 opacity-50 text-pennywyz-yellow-t2 absolute top-1/2 -translate-y-1/2 right-[30px] " />
-            {/* <Button
-            variant="outline"
-            role="combobox"
-            aria-expanded={open}
-            className="!max-w-full w-full mx-auto ring-pennywyz-ash-t1 justify-between border-none hover:bg-white rounded-8px p-[12px] text-left"
-          >
-            {value
-              ? frameworks.find((framework) => framework.value === value)?.label
-              : "Select framework..."}
-
-            <PlusIcon className="ml-2 w-[24px] shrink-0 opacity-50 text-pennywyz-yellow-t2 " />
-          </Button> */}
           </div>
         </PopoverAnchor>
         <PopoverContent
@@ -102,27 +76,25 @@ export const SearchBar = ({
           }}
         >
           <Command>
-            <CommandEmpty>No framework found.</CommandEmpty>
-            <CommandGroup>
-              {frameworks.map((framework) => (
+            <CommandEmpty>No product found.</CommandEmpty>
+            <CommandGroup className="max-h-[300px] !h-full overflow-y-scroll ">
+              {concatenatedData?.map((product) => (
                 <CommandItem
-                  key={framework.value}
-                  value={framework.value}
-                  onSelect={(currentValue) => {
-                    console.log({ currentValue });
-                    setValue(currentValue === value ? "" : currentValue);
-                    setOpen(false);
-                  }}
+                  key={product.id}
+                  value={JSON.stringify(product)}
+                  onSelect={handleSelect}
                 >
                   <Check
                     className={cn(
                       "mr-2 h-4 w-4",
-                      value === framework.value ? "opacity-100" : "opacity-0"
+                      selectedProducts[product.id] ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  {framework.label}
+                  {product.name}
                 </CommandItem>
               ))}
+              <div ref={scrollRef.ref}></div>
+              {isFetchingNextPage && "Loading..."}
             </CommandGroup>
           </Command>
         </PopoverContent>

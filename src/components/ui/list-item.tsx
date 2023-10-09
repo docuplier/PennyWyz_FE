@@ -2,16 +2,13 @@ import { ReactNode, useRef, useState } from "react";
 import { CheckBox } from "./checkbox";
 import { Typography } from "./typography";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "#/lib/utils";
+import { cn, getPriceRange } from "#/lib/utils";
 import { CustomDialog } from "../reusables/custom-dialog";
 import { useDialog } from "#/hooks/use-dialog";
-import {
-  LucideIcon,
-  MinusCircleIcon,
-  PlusCircleIcon,
-  PlusIcon,
-} from "lucide-react";
+import { LucideIcon, MinusCircleIcon, PlusCircleIcon } from "lucide-react";
 import { Button } from "./button";
+import { IProduct } from "#/http";
+import { useProductsContext } from "#/contexts/product-context";
 
 const BTN_WIDTH = 150;
 
@@ -26,28 +23,15 @@ const MESSAGE_DELETE_TRANSITION = {
 
 export type ListItemProps = {
   handleDelete: () => void;
+  product: IProduct;
 };
-export const ListItem = ({ handleDelete }: ListItemProps) => {
+export const ListItem = ({ product }: ListItemProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const { open, toggleDialog } = useDialog();
   const [isExpanded, setIsExpanded] = useState(false);
   const { open: openDeleteDialog, toggleDialog: toggleDeleteDialog } =
     useDialog();
   const checkboxRef = useRef<any>();
-
-  const [quantity, setQuantity] = useState(0);
-
-  const handleQuantityChange = ({
-    type,
-  }: {
-    type: "increment" | "decrement";
-  }) => {
-    if (type === "increment") {
-      setQuantity((prev) => prev + 1);
-    } else {
-      setQuantity((prev) => (prev > 1 ? prev - 1 : prev));
-    }
-  };
 
   const handleDragEnd = (info: any, messageId: any) => {
     const dragDistance = info.offset.x;
@@ -96,17 +80,14 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
             }}
           >
             <div ref={checkboxRef}>
-              <CheckBox id={"checkbox"} />
+              <CheckBox id={product.id?.toString()} />
             </div>
-            <Typography
-              text="Milo Instant Malt Chocolate Drinking Powder Tin 400g"
-              className="flex-1"
-            />
+            <Typography text={product.name} className="flex-1 capitalize" />
             <div className="flex-none flex flex-col items-end gap-[5px]">
               <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
-                <Typography text="4" size={10} />
+                <Typography text={product.quantity} size={10} />
               </div>
-              <Typography text="₦800 - ₦1,000" size={12} />
+              <Typography text={getPriceRange(product.pricedata)} size={12} />
             </div>
           </div>
           <AnimatePresence>
@@ -147,14 +128,13 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
       </motion.section>
       <QuantityDialog
         open={open}
-        quantity={quantity}
+        product={product}
         handleClose={toggleDialog}
-        handleQuantityChange={handleQuantityChange}
       />
       <DeleteDialog
         open={openDeleteDialog}
         handleClose={toggleDeleteDialog}
-        handleDelete={handleDelete}
+        product={product}
       />
     </>
   );
@@ -163,12 +143,14 @@ export const ListItem = ({ handleDelete }: ListItemProps) => {
 export const DeleteDialog = ({
   open,
   handleClose,
-  handleDelete,
+  product,
 }: {
   open: boolean;
   handleClose: () => void;
-  handleDelete: () => void;
+  product: IProduct;
 }) => {
+  const { handleProductDelete } = useProductsContext();
+
   return (
     <CustomDialog
       open={open}
@@ -176,11 +158,13 @@ export const DeleteDialog = ({
       size="sm"
       dialogFooter={
         <>
-          <Button variant={"outline"}>Cancel</Button>
+          <Button variant={"outline"} onClick={handleClose}>
+            Cancel
+          </Button>
           <Button
             onClick={() => {
               handleClose();
-              handleDelete();
+              handleProductDelete({ productId: product.id?.toString() });
             }}
           >
             Delete
@@ -200,14 +184,13 @@ export const DeleteDialog = ({
 export const QuantityDialog = ({
   open,
   handleClose,
-  handleQuantityChange,
-  quantity,
+  product,
 }: {
   open: boolean;
   handleClose: () => void;
-  quantity: number;
-  handleQuantityChange: ({ type }: { type: "increment" | "decrement" }) => void;
+  product: IProduct;
 }) => {
+  const { handleQuantityChange } = useProductsContext();
   return (
     <CustomDialog open={open} handleClose={handleClose} size="sm">
       <Typography
@@ -219,20 +202,30 @@ export const QuantityDialog = ({
       <section className="flex items-center justify-center gap-8">
         <QuantityActionIcon
           icon={MinusCircleIcon}
-          onClick={() => handleQuantityChange({ type: "decrement" })}
+          onClick={() =>
+            handleQuantityChange({
+              type: "decrement",
+              productId: product.id?.toString(),
+            })
+          }
         />
         <div className="w-[80px]  rounded-[8px] border border-pennywyz-ash-t1 p-[1rem] flex justify-center items-center">
           <Typography
-            text={quantity?.toString()}
+            text={product.quantity}
             className="text-pennywyz-ash-t2"
           />
         </div>
         <QuantityActionIcon
           icon={PlusCircleIcon}
-          onClick={() => handleQuantityChange({ type: "increment" })}
+          onClick={() =>
+            handleQuantityChange({
+              type: "increment",
+              productId: product.id?.toString(),
+            })
+          }
         />
       </section>
-      <div className="flex justify-center mt-[24px]">
+      <div className="flex justify-center mt-[24px]" onClick={handleClose}>
         <Button>Apply</Button>
       </div>
     </CustomDialog>
