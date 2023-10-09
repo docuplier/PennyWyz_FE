@@ -17,6 +17,16 @@ import { CSRWrapper } from "#/components/layouts/CSRWrapper";
 export default function NewList() {
   const { selectedProducts } = useProductsContext();
 
+  const [isExpandedId, setIsExpandedId] = useState<string | undefined>("");
+
+  const handleExpansion = (expandedId: string) => {
+    if (isExpandedId === expandedId) {
+      setIsExpandedId("");
+    } else {
+      setIsExpandedId(expandedId);
+    }
+  };
+
   return (
     <>
       <AppLayout>
@@ -31,8 +41,9 @@ export default function NewList() {
                 {Object.values(selectedProducts).map((v) => (
                   <ListItem
                     key={v.id}
+                    isExpandedId={isExpandedId}
+                    handleExpansion={handleExpansion}
                     product={v}
-                    handleDelete={() => console.log("ann")}
                   />
                 ))}
               </AnimatePresence>

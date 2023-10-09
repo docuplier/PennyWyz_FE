@@ -22,13 +22,17 @@ const MESSAGE_DELETE_TRANSITION = {
 };
 
 export type ListItemProps = {
-  handleDelete: () => void;
   product: IProduct;
+  isExpandedId: string | undefined;
+  handleExpansion: (expandedId: string | null) => void;
 };
-export const ListItem = ({ product }: ListItemProps) => {
+export const ListItem = ({
+  product,
+  isExpandedId,
+  handleExpansion,
+}: ListItemProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const { open, toggleDialog } = useDialog();
-  const [isExpanded, setIsExpanded] = useState(false);
   const { open: openDeleteDialog, toggleDialog: toggleDeleteDialog } =
     useDialog();
   const checkboxRef = useRef<any>();
@@ -42,6 +46,8 @@ export const ListItem = ({ product }: ListItemProps) => {
       toggleDialog();
     }
   };
+
+  const isExpanded = product.id?.toString() === isExpandedId;
 
   return (
     <>
@@ -65,7 +71,7 @@ export const ListItem = ({ product }: ListItemProps) => {
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(_, info) => {
             handleDragEnd(info, { item: "afa" });
-            setIsExpanded(false);
+            handleExpansion(null);
           }}
           onDragStart={() => {
             setIsDragging(true);
@@ -76,7 +82,7 @@ export const ListItem = ({ product }: ListItemProps) => {
             className="flex items-center gap-[10px] px-[8px] "
             onClick={(e) => {
               if (!checkboxRef?.current?.contains(e.target))
-                setIsExpanded(!isExpanded);
+                handleExpansion(product.id?.toString());
             }}
           >
             <div ref={checkboxRef}>

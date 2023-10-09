@@ -26,7 +26,7 @@ const ProductsContext = createContext<ProductsContextType>(
   {} as ProductsContextType
 );
 
-const SEARCH_SUGGESTION_LENGTH = 3;
+const SEARCH_SUGGESTION_LENGTH = 1;
 
 const { getFromStore, clearStore, addToStore } = AppStorage();
 
