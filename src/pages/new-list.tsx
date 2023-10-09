@@ -17,7 +17,7 @@ import { CSRWrapper } from "#/components/layouts/CSRWrapper";
 export default function NewList() {
   const { selectedProducts } = useProductsContext();
 
-  const [isExpandedId, setIsExpandedId] = useState<string | undefined>("");
+  const [isExpandedId, setIsExpandedId] = useState<string>("");
 
   const handleExpansion = (expandedId: string) => {
     if (isExpandedId === expandedId) {

@@ -23,8 +23,8 @@ const MESSAGE_DELETE_TRANSITION = {
 
 export type ListItemProps = {
   product: IProduct;
-  isExpandedId: string | undefined;
-  handleExpansion: (expandedId: string | null) => void;
+  isExpandedId: string;
+  handleExpansion: (expandedId: string) => void;
 };
 export const ListItem = ({
   product,
@@ -71,7 +71,7 @@ export const ListItem = ({
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(_, info) => {
             handleDragEnd(info, { item: "afa" });
-            handleExpansion(null);
+            handleExpansion("");
           }}
           onDragStart={() => {
             setIsDragging(true);
