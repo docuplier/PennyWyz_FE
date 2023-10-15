@@ -22,6 +22,7 @@ type CustomDialogType = {
   className?: string;
   bodyClassName?: string;
   size?: "sm" | "lg";
+  preventOutsideClose?: boolean;
 };
 
 const dialogVariants = cva("", {
@@ -46,6 +47,7 @@ export const CustomDialog = ({
   className,
   bodyClassName,
   size,
+  preventOutsideClose,
 }: CustomDialogType) => {
   return (
     <Dialog open={open} onOpenChange={handleClose}>
@@ -56,6 +58,11 @@ export const CustomDialog = ({
           className,
           dialogVariants({ size })
         )}
+        onInteractOutside={(e) => {
+          if (preventOutsideClose) {
+            e.preventDefault();
+          }
+        }}
       >
         {dialogHeader && (
           <DialogHeader className="border-b p-[16px] text-left">
@@ -64,7 +71,7 @@ export const CustomDialog = ({
         )}
         <div className={cn("p-[24px] space-y-4", bodyClassName)}>
           <div className={cn(!dialogHeader && "pt-4")}>{children}</div>
-          <DialogFooter className="flex justify-end  flex-row gap-2">
+          <DialogFooter className="flex flex-row justify-end gap-2">
             {dialogFooter}
           </DialogFooter>
         </div>

@@ -31,6 +31,8 @@ export const ListItem = ({
   isExpandedId,
   handleExpansion,
 }: ListItemProps) => {
+  const { handleProductDelete } = useProductsContext();
+
   const [isDragging, setIsDragging] = useState(false);
   const { open, toggleDialog } = useDialog();
   const { open: openDeleteDialog, toggleDialog: toggleDeleteDialog } =
@@ -79,7 +81,7 @@ export const ListItem = ({
           className="w-full bg-pennywyz-ash-t1 rounded-[8px] pt-[6px] pb-[2px] px-[2px] relative z-30"
         >
           <div
-            className="flex items-center gap-[10px] px-[8px] "
+            className="flex items-center gap-[10px] px-[12px] "
             onClick={(e) => {
               if (!checkboxRef?.current?.contains(e.target))
                 handleExpansion(product.id?.toString());
@@ -93,7 +95,7 @@ export const ListItem = ({
               <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
                 <Typography text={product.quantity} size={10} />
               </div>
-              <Typography text={getPriceRange(product.pricedata)} size={12} />
+              <Typography text={getPriceRange(product.priceData)} size={12} />
             </div>
           </div>
           <AnimatePresence>
@@ -140,7 +142,9 @@ export const ListItem = ({
       <DeleteDialog
         open={openDeleteDialog}
         handleClose={toggleDeleteDialog}
-        product={product}
+        handleDelete={() =>
+          handleProductDelete({ productId: product.id?.toString() })
+        }
       />
     </>
   );
@@ -149,14 +153,12 @@ export const ListItem = ({
 export const DeleteDialog = ({
   open,
   handleClose,
-  product,
+  handleDelete,
 }: {
   open: boolean;
   handleClose: () => void;
-  product: IProduct;
+  handleDelete: VoidFunction;
 }) => {
-  const { handleProductDelete } = useProductsContext();
-
   return (
     <CustomDialog
       open={open}
@@ -170,7 +172,7 @@ export const DeleteDialog = ({
           <Button
             onClick={() => {
               handleClose();
-              handleProductDelete({ productId: product.id?.toString() });
+              handleDelete();
             }}
           >
             Delete
@@ -211,7 +213,7 @@ export const QuantityDialog = ({
           onClick={() =>
             handleQuantityChange({
               type: "decrement",
-              productId: product.id?.toString(),
+              productId: product.productId?.toString(),
             })
           }
         />
@@ -226,7 +228,7 @@ export const QuantityDialog = ({
           onClick={() =>
             handleQuantityChange({
               type: "increment",
-              productId: product.id?.toString(),
+              productId: product.productId?.toString(),
             })
           }
         />

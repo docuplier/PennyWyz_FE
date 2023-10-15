@@ -18,19 +18,47 @@ export const useGetProducts = ({
   return query;
 };
 
+export type IListProduct = {
+  Product: {
+    priceData: {
+      price: number;
+      lowerRange: number;
+      upperRange: number;
+      currency: string;
+    };
+    id: number;
+    name: number;
+    country: number;
+    createdAt: string;
+    updatedAt: string;
+    categoryId: 1;
+    subcategoryId: null;
+  };
+  createdAt: string;
+  updatedAt: string;
+  quantity: number;
+  id: number;
+  listId: string;
+  productId: number;
+};
+
 export type IProduct = {
-  pricedata: {
+  priceData: {
     price: number;
-    lowerrange: number;
-    upperrange: number;
+    lowerRange: number;
+    upperRange: number;
     currency: string;
   };
   id: number;
   name: number;
   country: number;
-  createdat: "2023-10-08T16:09:09.893Z";
-  updatedat: "2023-10-08T16:09:09.893Z";
-  categoryid: 1;
-  subcategoryid: null;
+  createdAt: string;
+  updatedAt: string;
+  categoryId: 1;
+  subcategoryId: null;
+  listId: string;
   quantity: number;
+  productId: number;
+  listContentId: number;
+  newUpdatedAt?: Date;
 };

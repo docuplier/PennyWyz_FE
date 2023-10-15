@@ -5,13 +5,43 @@ import { Label } from "#/components/ui/label";
 import { Typography } from "#/components/ui/typography";
 import { useAuthContext } from "#/contexts/auth-context";
 import { AuthViewEnums } from "./auth-dialog";
+import { TSignup, useAuth } from "./hooks/useAuth";
+import { useForm } from "react-hook-form";
 
 export const SignupForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
+
+  const { signUpMutation, handleSignup } = useAuth();
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<TSignup>();
+
+  const onSubmit = (data: TSignup) => {
+    handleSignup(data);
+  };
+
   return (
-    <div className="space-y-[16px]">
-      <CustomInput label="Email" />
-      <CustomInput label="Password" type="password" />
+    <form className="space-y-[16px]" onSubmit={handleSubmit(onSubmit)}>
+      <CustomInput
+        label="Email"
+        name="email"
+        type="email"
+        register={register}
+        rules={{ required: { value: true, message: "Enter your email" } }}
+        errorMessage={errors["email"]?.message}
+      />
+      <CustomInput
+        label="Password"
+        type="password"
+        name="password"
+        register={register}
+        rules={{ required: { value: true, message: "Enter your password" } }}
+        errorMessage={errors["password"]?.message}
+        autoComplete="true"
+      />
       <div className="flex items-center gap-2">
         <CheckBox id="rememberMe" />
         <Label
@@ -50,6 +80,6 @@ export const SignupForm = () => {
           className="text-center"
         />
       </button>
-    </div>
+    </form>
   );
 };

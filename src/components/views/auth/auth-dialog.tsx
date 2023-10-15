@@ -45,6 +45,7 @@ export const AuthDialog = ({
       handleClose={handleClose}
       className="max-w-[350px]"
       bodyClassName="pt-0"
+      preventOutsideClose
     >
       {view.element}
     </CustomDialog>

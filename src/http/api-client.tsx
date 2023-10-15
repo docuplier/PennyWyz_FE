@@ -19,15 +19,19 @@ const queryClient = new QueryClient({
       queryFn: defaultQueryFn,
       retry: 0,
       refetchOnWindowFocus: false,
-      staleTime: 5 * 60 * 1000,
-      refetchInterval: 5 * 60 * 1000, // 3 minutes
+
+      staleTime: 0,
+      cacheTime: 5 * 60 * 1000,
+      // staleTime: 5 * 60 * 1000,
+      // refetchInterval: 5 * 60 * 1000, // 3 minutes
     },
   },
 });
 
 type IAppMutate = {
   url: string;
-  method?: "POST" | "PATCH" | "DELETE";
+  method?: "POST" | "PATCH" | "DELETE" | "PUT";
+  hasIdParams?: boolean;
 } & UseMutationOptions;
 
 export const ApiClientProvider = ({ children }: { children: ReactNode }) => {
@@ -42,10 +46,18 @@ export const ApiClientProvider = ({ children }: { children: ReactNode }) => {
 export const useAppMutation = ({
   url,
   method = "POST",
+  hasIdParams,
   ...rest
 }: IAppMutate) => {
   return useMutation<any>({
-    mutationFn: (data) => internalAxios({ method, url, data }),
+    mutationFn: (data) =>
+      internalAxios({
+        method,
+        url: !!hasIdParams
+          ? `${url}${(data as any).idParams ?? (data as any).id}`
+          : url,
+        data,
+      }),
     ...rest,
   });
 };

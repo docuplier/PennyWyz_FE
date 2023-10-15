@@ -10,11 +10,13 @@ export const AppLayout = ({
   className,
   desktopHeader,
   mobileHeader,
+  hasBackIcon,
 }: {
   children: ReactNode;
   className?: string;
   desktopHeader?: ReactNode;
   mobileHeader?: ReactNode;
+  hasBackIcon?: boolean;
 }) => {
   const { width } = useViewportSize();
 
@@ -22,9 +24,9 @@ export const AppLayout = ({
 
   return (
     <div className={cn(!isMobile ? " bg-pennywyz-yellow-t1" : "bg-white")}>
-      <main className={cn("min-h-screen  flex flex-col container ", className)}>
+      <main className={cn("min-h-screen  flex flex-col ", className)}>
         <div className="hidden md:block">
-          <Header />
+          <Header hasBackIcon={hasBackIcon} />
           {desktopHeader}
         </div>
         <section
@@ -41,7 +43,7 @@ export const AppLayout = ({
           >
             <div className="max-w-[90%] mx-auto min-h-[260px]">
               <div className="md:hidden">
-                <Header />
+                <Header hasBackIcon={hasBackIcon} />
                 {mobileHeader}
               </div>
               <motion.div

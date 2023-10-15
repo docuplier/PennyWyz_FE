@@ -1,11 +1,7 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { Button } from "#/components/ui/button";
 import { Typography } from "#/components/ui/typography";
 import { SearchBar } from "#/components/ui/search-bar";
 import { ListItem } from "#/components/ui/list-item";
 import { AppLayout } from "#/components/layouts/app-layout";
-import { Hero } from "#/components/views/home/hero";
 import { ListTitle } from "#/components/layouts/list-title";
 import { TotalHeader } from "#/components/layouts/total-header";
 import { InfoItem } from "#/components/reusables/info-item";
@@ -13,9 +9,18 @@ import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useProductsContext } from "#/contexts/product-context";
 import { CSRWrapper } from "#/components/layouts/CSRWrapper";
+import { debounce } from "#/lib/utils";
+import { BackIcon } from "#/components/ui/back-icon";
 
-export default function NewList() {
-  const { selectedProducts } = useProductsContext();
+export const NewList = () => {
+  const {
+    selectedProductsArray,
+    initalListGroupName,
+    handleUpdateListGroup,
+    listGroupId,
+  } = useProductsContext();
+
+  const debouncedFunction = debounce({ func: handleUpdateListGroup });
 
   const [isExpandedId, setIsExpandedId] = useState<string>("");
 
@@ -29,16 +34,22 @@ export default function NewList() {
 
   return (
     <>
-      <AppLayout>
+      <AppLayout hasBackIcon>
         <section className="space-y-[20px] mb-[20px] mt-[20px]">
-          <ListTitle />
+          <ListTitle
+            initialValue={initalListGroupName}
+            key={initalListGroupName}
+            handleSaveTitle={(name: string) =>
+              debouncedFunction({ name, listGroupId })
+            }
+          />
           <TotalHeader />
         </section>
         <div className="w-full">
           <div className="mt-[20px] space-y-2">
             <CSRWrapper>
               <AnimatePresence>
-                {Object.values(selectedProducts).map((v) => (
+                {selectedProductsArray.map((v) => (
                   <ListItem
                     key={v.id}
                     isExpandedId={isExpandedId}
@@ -58,4 +69,4 @@ export default function NewList() {
       </AppLayout>
     </>
   );
-}
+};

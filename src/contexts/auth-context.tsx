@@ -1,8 +1,9 @@
 import { AuthDialog, AuthViewEnums } from "#/components/views/auth/auth-dialog";
 import { useDialog } from "#/hooks/use-dialog";
-import { getCookie } from "#/lib/appCookie";
+import { deleteCookie, getCookie, setCookie } from "#/lib/appCookie";
 import { AppStorage } from "#/lib/appStorage";
 import { STORAGE_KEYS } from "#/lib/storageKeys";
+import { showToast } from "#/lib/toast";
 import { delayInSeconds } from "#/lib/utils";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/router";
@@ -62,15 +63,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     !!getCookie(STORAGE_KEYS.AUTH_TOKEN)
   );
   const [authUser, setAuthUser] = useState<TAuthUser>(
-    isAuthenticated ? getFromStore(STORAGE_KEYS.AUTH_USER) : ({} as TAuthUser)
+    isAuthenticated ? getFromStore("AUTH_USER") : ({} as TAuthUser)
   );
 
   const softReload = () => router.reload();
 
-  const getUser = () => getFromStore(STORAGE_KEYS.AUTH_USER);
-  const handleAuthentication = ({ user, token }: TAuthenticateUser) => {};
+  const getUser = () => getFromStore("AUTH_USER");
+  const handleAuthentication = ({ user, token }: TAuthenticateUser) => {
+    addToStore("AUTH_USER", user);
+    setCookie(STORAGE_KEYS.AUTH_TOKEN, token.value, token.expiryDate);
+    setIsAuthenticated(true);
+    // softReload();
+  };
 
-  const logout = async () => {};
+  const logout = async () => {
+    clearStore();
+    deleteCookie(STORAGE_KEYS.AUTH_TOKEN);
+    setIsAuthenticated(false);
+    showToast({ title: "Successfully logged out", type: "error" });
+    router.push("/");
+  };
 
   const shouldPerformAuthAction = async ({
     action,

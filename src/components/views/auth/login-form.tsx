@@ -8,15 +8,45 @@ import { Typography } from "#/components/ui/typography";
 import { useAuthContext } from "#/contexts/auth-context";
 import { ReactNode } from "react";
 import { AuthViewEnums } from "./auth-dialog";
+import { useForm } from "react-hook-form";
+import { TSignup, useAuth } from "./hooks/useAuth";
 
 export const LoginForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
+
+  const { loginMutation, handleLogin } = useAuth();
+
+  const {
+    register,
+    formState: { errors },
+    handleSubmit,
+  } = useForm<TSignup>();
+
+  const onSubmit = (data: TSignup) => {
+    handleLogin(data);
+  };
+
   return (
     <section className="space-y-[24px]">
       <LoginWithSocial />
-      <div className="space-y-[16px]">
-        <CustomInput label="Email" />
-        <CustomInput label="Password" type="password" />
+      <form className="space-y-[16px]" onSubmit={handleSubmit(onSubmit)}>
+        <CustomInput
+          label="Email"
+          name="email"
+          type="email"
+          register={register}
+          rules={{ required: { value: true, message: "Enter your email" } }}
+          errorMessage={errors["email"]?.message}
+        />
+        <CustomInput
+          label="Password"
+          type="password"
+          name="password"
+          register={register}
+          rules={{ required: { value: true, message: "Enter your password" } }}
+          errorMessage={errors["password"]?.message}
+          autoComplete="true"
+        />
         <div className="!-mt-[1px] flex items-center justify-between">
           <section className="flex items-center gap-2">
             <CheckBox id="rememberMe" />
@@ -32,7 +62,11 @@ export const LoginForm = () => {
           </button>
         </div>
         <div>
-          <Button fullWidth className="mt-[10px]">
+          <Button
+            fullWidth
+            className="mt-[10px]"
+            isLoading={loginMutation.isLoading}
+          >
             Login
           </Button>
         </div>
@@ -54,7 +88,7 @@ export const LoginForm = () => {
             className="text-center"
           />
         </button>
-      </div>
+      </form>
     </section>
   );
 };

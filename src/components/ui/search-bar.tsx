@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import { cn } from "#/lib/utils";
+import { cn, toCamel } from "#/lib/utils";
 import {
   Command,
   CommandEmpty,
@@ -16,9 +16,11 @@ import { useProductsContext } from "#/contexts/product-context";
 
 export const SearchBar = ({
   navigationPath,
+  navigationAction,
   placeholder = "Create a New List",
 }: {
   navigationPath?: string;
+  navigationAction?: VoidFunction;
   placeholder?: string;
 }) => {
   const ref = React.useRef<any>();
@@ -39,26 +41,39 @@ export const SearchBar = ({
 
   const router = useRouter();
 
+  React.useEffect(() => {
+    handleSearchValue("");
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [router.asPath]);
+
   return (
     <>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverAnchor asChild>
           <div
-            className="bg-pennywyz-ash-t1 p-[15px] rounded-[12px] relative"
+            className={cn(
+              "bg-pennywyz-ash-t1 p-[15px] rounded-[12px] relative",
+              !!navigationAction && "cursor-pointer"
+            )}
             ref={ref}
           >
             <Command>
               <CommandInput
                 onFocus={() => {
-                  if (navigationPath) {
+                  if (navigationAction) {
+                    navigationAction?.();
+                  } else if (navigationPath) {
                     router.push(navigationPath);
                   }
                 }}
-                className="text-[16px]"
+                className={cn(
+                  "text-[16px]",
+                  !!navigationAction && "cursor-pointer"
+                )}
                 // ref={searchRef}
                 placeholder={placeholder}
                 onValueChange={handleSearchValue}
-                value={searchValue}
+                value={!!navigationAction ? "" : searchValue}
                 onClick={() => {
                   setOpen(true);
                 }}
@@ -78,11 +93,13 @@ export const SearchBar = ({
           <Command>
             <CommandEmpty>No product found.</CommandEmpty>
             <CommandGroup className="max-h-[300px] !h-full overflow-y-scroll ">
-              {concatenatedData?.map((product) => (
+              {concatenatedData?.map((product, index) => (
                 <CommandItem
                   key={product.id}
-                  value={JSON.stringify(product)}
-                  onSelect={handleSelect}
+                  value={product.id?.toString()}
+                  onSelect={() => {
+                    handleSelect(product);
+                  }}
                 >
                   <Check
                     className={cn(

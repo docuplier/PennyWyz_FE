@@ -1,39 +1,55 @@
 import { PennyWyzLogo } from "#/assets/svgs/pennywyz-logo";
-import React, { ReactNode, SVGProps, useState } from "react";
+import React, { useState } from "react";
 import { Typography } from "../ui/typography";
 import { MenuIcon, UserIcon } from "lucide-react";
-import { useDialog } from "#/hooks/use-dialog";
 import { useAuthContext } from "#/contexts/auth-context";
-import { AuthViewEnums } from "../views/auth/auth-dialog";
 import { cn } from "#/lib/utils";
 import Link from "next/link";
-import styles from "./header.module.css";
-import ReactFlagsSelect, { Ng, Us } from "react-flags-select";
+import { Ng, Us } from "react-flags-select";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@radix-ui/react-popover";
+import { CSRWrapper } from "./CSRWrapper";
+import { BackIcon } from "../ui/back-icon";
 
-const Header = ({ className }: { className?: string }) => {
-  const { openAuthDialog } = useAuthContext();
+const Header = ({
+  className,
+  hasBackIcon,
+}: {
+  className?: string;
+  hasBackIcon?: boolean;
+}) => {
+  const { openAuthDialog, isAuthenticated, logout } = useAuthContext();
 
   const [selected, setSelected] = useState<CountryListProps>(COUNTRY_LIST[0]);
 
   return (
     <>
       <div
-        className={cn("pt-[20px] flex justify-between items-center", className)}
+        className={cn(
+          "pt-[20px] flex justify-between items-center md:container",
+          className
+        )}
       >
-        <Link href={"/"} className="flex items-center gap-2">
-          <PennyWyzLogo />
-          <Typography
-            text="PennyWyz"
-            size={24}
-            as="h3"
-            className="font-semibold"
-          />
-        </Link>
+        <div className="flex items-center gap-1 ">
+          {hasBackIcon && <BackIcon />}
+          <Link
+            href={isAuthenticated ? "/all-lists" : "/"}
+            className="flex items-center gap-2"
+          >
+            <div className="!flex-none">
+              <PennyWyzLogo />
+            </div>
+            <Typography
+              text="PennyWyz"
+              size={24}
+              as="h3"
+              className="font-semibold"
+            />
+          </Link>
+        </div>
         <section className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger>
@@ -53,12 +69,15 @@ const Header = ({ className }: { className?: string }) => {
             </PopoverContent>
           </Popover>
 
-          <button
-            onClick={() => openAuthDialog()}
-            className="w-[24px] h-[24px] rounded-full bg-pennywyz-yellow-t1 flex items-center justify-center "
-          >
-            <UserIcon size={14} strokeWidth={3} />
-          </button>
+          <CSRWrapper>
+            <button
+              onClick={() => (isAuthenticated ? logout() : openAuthDialog())}
+              // disabled={isAuthenticated ? LogOut:  }
+              className="w-[24px] h-[24px] rounded-full bg-pennywyz-yellow-t1 flex items-center justify-center "
+            >
+              {isAuthenticated ? "A" : <UserIcon size={14} strokeWidth={3} />}
+            </button>
+          </CSRWrapper>
           <button>
             <MenuIcon className="text-pennywyz-yellow-t2" size={24} />
           </button>

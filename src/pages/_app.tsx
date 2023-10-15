@@ -4,9 +4,12 @@ import { HydrationProvider } from "#/contexts/hydration-provider";
 import { ProductsProvider } from "#/contexts/product-context";
 import { ApiClientProvider } from "#/http";
 import "#/styles/globals.css";
+import "react-toastify/dist/ReactToastify.css";
+
 import { AnimatePresence, motion } from "framer-motion";
 import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
+import { ToastContainer } from "react-toastify";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -14,6 +17,17 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
       <SeoTag title="Home" />
+      <ToastContainer
+        icon
+        autoClose={2000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        draggable
+        limit={1}
+        pauseOnHover
+      />
       <ApiClientProvider>
         <HydrationProvider>
           <AnimatePresence mode="wait" initial={false}>
