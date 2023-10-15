@@ -113,7 +113,7 @@ export const debounce = ({
 }) => {
   let timeout: any;
 
-  return function executedFunction(...args) {
+  return function executedFunction(...args: any[]) {
     const later = () => {
       timeout = null;
 

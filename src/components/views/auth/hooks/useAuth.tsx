@@ -42,7 +42,7 @@ export const useAuth = () => {
       },
       onError: (data) => {
         showToast({
-          title: "Error logging in user",
+          title: "Invalid Credentials",
           type: "error",
         });
       },
