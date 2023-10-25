@@ -22,7 +22,7 @@ export type ProductsContextType = {
   selectedProducts: { [key in string]: IProduct };
   searchValue: string;
   selectedProductsArray: IProduct[];
-  selectedProductsTotal: number;
+  selectedProductsTotal: string;
   handleQuantityChange: ({
     productId,
     type,
