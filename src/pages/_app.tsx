@@ -10,6 +10,7 @@ import { AnimatePresence, motion } from "framer-motion";
 import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
 import { ToastContainer } from "react-toastify";
+import { AlertDialogProvider } from "#/contexts/alert-dialog-context";
 
 const font = Nunito({ subsets: ["latin"] });
 
@@ -31,13 +32,15 @@ export default function App({ Component, pageProps }: AppProps) {
       <ApiClientProvider>
         <HydrationProvider>
           <AnimatePresence mode="wait" initial={false}>
-            <AuthProvider>
-              <ProductsProvider>
-                <div className={font.className}>
-                  <Component {...pageProps} />
-                </div>
-              </ProductsProvider>
-            </AuthProvider>
+            <AlertDialogProvider>
+              <AuthProvider>
+                <ProductsProvider>
+                  <div className={font.className}>
+                    <Component {...pageProps} />
+                  </div>
+                </ProductsProvider>
+              </AuthProvider>
+            </AlertDialogProvider>
           </AnimatePresence>
         </HydrationProvider>
       </ApiClientProvider>

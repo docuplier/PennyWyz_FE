@@ -1,3 +1,4 @@
+import { useAlertDialog } from "#/contexts/alert-dialog-context";
 import { debounce } from "#/lib/utils";
 import { PencilLine, Share2Icon } from "lucide-react";
 import { useState } from "react";
@@ -9,13 +10,11 @@ export const ListTitle = ({
   initialValue: string;
   handleSaveTitle: (title: string) => void;
 }) => {
+  const { toggleShareDialog } = useAlertDialog();
   const [value, setValue] = useState(initialValue);
 
   const handleKeyDown = (evt: any) => {
     setValue(evt.target.value);
-    if (evt.target.value.length >= 3) {
-      handleSaveTitle(value);
-    }
   };
 
   return (
@@ -27,14 +26,19 @@ export const ListTitle = ({
           onBlur={handleKeyDown}
           value={value}
           // onKeyDown={handleKeyDown}
-          onChange={handleKeyDown}
+          onChange={(e) => {
+            handleKeyDown(e);
+            if (e.target.value.length >= 3) {
+              handleSaveTitle(e.target.value);
+            }
+          }}
           className="border-nne foucs:border-none focus:outline-none text-[24px] "
         />
         <PencilLine size={20} className="text-pennywyz-ash-t2" />
       </section>
       <section>
         <button>
-          <Share2Icon size={20} />
+          <Share2Icon size={20} onClick={toggleShareDialog} />
         </button>
       </section>
     </div>

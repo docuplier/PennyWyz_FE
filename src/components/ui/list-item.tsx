@@ -143,7 +143,7 @@ export const ListItem = ({
         open={openDeleteDialog}
         handleClose={toggleDeleteDialog}
         handleDelete={() =>
-          handleProductDelete({ productId: product.id?.toString() })
+          handleProductDelete({ productId: product.productId?.toString() })
         }
       />
     </>

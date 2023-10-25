@@ -10,6 +10,8 @@ import React, {
   useMemo,
 } from "react";
 import { useHydrationContext } from "./hydration-provider";
+import { COUNTRY_LIST, CountryListProps } from "#/components/layouts/header";
+import { formatNumberToCurrency, getRangeFormmater } from "#/lib/utils";
 
 export type ProductsContextType = {
   handleSearchValue: (search: string) => void;
@@ -38,13 +40,15 @@ export type ProductsContextType = {
     listGroupId: string;
   }) => void;
   listGroupId: string;
+  handleSelectedCountry: (country: CountryListProps) => void;
+  selectedCountry: CountryListProps;
 };
 
 const ProductsContext = createContext<ProductsContextType>(
   {} as ProductsContextType
 );
 
-const SEARCH_SUGGESTION_LENGTH = 1;
+const SEARCH_SUGGESTION_LENGTH = 3;
 
 const { getFromStore, clearStore, addToStore } = AppStorage();
 
@@ -63,6 +67,9 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   }>({});
   const [initalListGroupName, setInitialListGroupName] =
     React.useState("Untitled");
+
+  const [selectedCountry, setSelectedCountry] =
+    React.useState<CountryListProps>(COUNTRY_LIST[0]);
 
   const {
     dbListQuery,
@@ -107,18 +114,32 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   }, [selectedProducts]);
 
   const selectedProductsTotal = useMemo(() => {
-    return selectedProductsArray.reduce((acc, curr) => {
-      acc += curr?.quantity * curr?.priceData?.price || 0;
-      return acc;
-    }, 0);
+    const mappedTotal = selectedProductsArray.reduce(
+      (acc, curr) => {
+        acc.lowerRange += curr?.quantity * curr?.priceData?.lowerRange || 0;
+        acc.upperRange += curr?.quantity * curr?.priceData?.upperRange || 0;
+        return acc;
+      },
+      { lowerRange: 0, upperRange: 0 }
+    );
+
+    return getRangeFormmater({
+      upperRange: mappedTotal.upperRange,
+      lowerRange: mappedTotal.lowerRange,
+    });
   }, [selectedProductsArray]);
 
   const isEnabled = searchValue?.trim().length >= SEARCH_SUGGESTION_LENGTH;
 
   const getProducts = useGetProducts({
     search: searchValue,
+    country: selectedCountry.value,
     enabled: isEnabled,
   });
+
+  const handleSelectedCountry = (country: CountryListProps) => {
+    setSelectedCountry(country);
+  };
 
   const handleSelect = async (parsedProduct: IProduct) => {
     const duplicatedProducts = { ...selectedProducts };
@@ -238,6 +259,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         initalListGroupName,
         listGroupId,
         handleUpdateListGroup,
+        handleSelectedCountry,
+        selectedCountry,
       }}
     >
       {children}
@@ -249,8 +272,8 @@ export const useProductsContext = () => useContext(ProductsContext);
 
 const sortWithUpdatedAt = (product: IProduct[]) =>
   [...product].sort((a, b) => {
-    const dateA = new Date(a.updatedAt);
-    const dateB = new Date(b.updatedAt);
+    const dateA = new Date(a.createdAt);
+    const dateB = new Date(b.createdAt);
 
     // Compare the dates in descending order
     if (dateA > dateB) return 1;

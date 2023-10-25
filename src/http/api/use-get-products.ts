@@ -6,12 +6,14 @@ import { useInfiniteFetch } from "../hooks";
 export const useGetProducts = ({
   search,
   enabled,
+  country,
 }: {
   search: string;
   enabled?: boolean;
+  country: string;
 }) => {
   const query = useInfiniteFetch<IProduct>({
-    url: API_URLS.GET_PRODUCTS({ search }),
+    url: API_URLS.GET_PRODUCTS({ search, country }),
     enabled: enabled ? true : false,
   });
 

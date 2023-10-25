@@ -1,3 +1,5 @@
+import { Typography } from "#/components/ui/typography";
+import { useAlertDialog } from "#/contexts/alert-dialog-context";
 import { useAuthContext } from "#/contexts/auth-context";
 import { useAppMutation } from "#/http";
 import { API_URLS } from "#/http/api-urls";
@@ -12,7 +14,51 @@ export const useAuth = () => {
     useAuthContext();
   const router = useRouter();
 
-  const finalizeLogin = (data: any) => {
+  const alertDialog = useAlertDialog();
+
+  const renderAlertDialog = ({ email }: { email: string }) =>
+    alertDialog.render({
+      title: "Sign Up Successful!",
+      iconType: "success",
+      content: (
+        <>
+          <Typography text={`We sent an email to ${email}.`} size={12} />
+          <ul className="list-disc pl-[18px] space-y-1 mt-[10px]">
+            <li>
+              <Typography
+                text={
+                  <>
+                    Open your email app and look for this email titled -
+                    <span className="font-semibold">Welcome to PennyWyz</span>
+                  </>
+                }
+                size={12}
+              />
+            </li>
+            <li>
+              <Typography
+                text={
+                  <>
+                    Click on the{" "}
+                    <span className="font-semibold"> Verify Email</span> button
+                    in the mail to verify your email.
+                  </>
+                }
+                size={12}
+              />
+            </li>
+          </ul>
+        </>
+      ),
+    });
+
+  const finalizeLogin = ({
+    data,
+    isSignup = false,
+  }: {
+    data: any;
+    isSignup?: boolean;
+  }) => {
     const result = data?.data?.data;
 
     if (!result.accessToken) return;
@@ -33,12 +79,16 @@ export const useAuth = () => {
     router.push("/all-lists");
 
     closeAuthDialog();
+
+    if (isSignup) {
+      renderAlertDialog({ email: data.email });
+    }
   };
 
   const handleLogin = ({ email, password }: TSignup) => {
     loginMutation.mutate({ email, password } as any, {
       onSuccess: (data) => {
-        finalizeLogin(data);
+        finalizeLogin({ data: { ...data, email }, isSignup: false });
       },
       onError: (data) => {
         showToast({
@@ -52,7 +102,7 @@ export const useAuth = () => {
   const handleSignup = ({ email, password }: TSignup) => {
     signUpMutation.mutate({ email, password } as any, {
       onSuccess: (data) => {
-        finalizeLogin(data);
+        finalizeLogin({ data: { ...data, email }, isSignup: true });
       },
       onError: (data) => {
         showToast({

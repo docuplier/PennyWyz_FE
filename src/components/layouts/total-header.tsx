@@ -15,7 +15,7 @@ export const TotalHeader = () => {
       <section className="flex items-center gap-2">
         <Typography text="Total Budget" size={12} />
         <Typography
-          text={formatNumberToCurrency({ number: selectedProductsTotal })}
+          text={selectedProductsTotal}
           size={16}
           suppressHydrationWarning
         />

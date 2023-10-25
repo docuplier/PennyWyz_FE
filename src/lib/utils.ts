@@ -139,3 +139,15 @@ export const generateRandomCharacters = (length: number) => {
 
   return randomString;
 };
+
+export const getRangeFormmater = ({
+  upperRange,
+  lowerRange,
+}: {
+  upperRange: number;
+  lowerRange: number;
+}) => {
+  return `${formatNumberToCurrency({
+    number: lowerRange,
+  })} - ${formatNumberToCurrency({ number: upperRange })}`;
+};

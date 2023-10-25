@@ -4,13 +4,14 @@ import { ListItem } from "#/components/ui/list-item";
 import { AppLayout } from "#/components/layouts/app-layout";
 import { ListTitle } from "#/components/layouts/list-title";
 import { TotalHeader } from "#/components/layouts/total-header";
-import { InfoItem } from "#/components/reusables/info-item";
+import { InfoItem, InfoItemSecondary } from "#/components/reusables/info-item";
 import { AnimatePresence } from "framer-motion";
 import { useState } from "react";
 import { useProductsContext } from "#/contexts/product-context";
 import { CSRWrapper } from "#/components/layouts/CSRWrapper";
 import { debounce } from "#/lib/utils";
 import { BackIcon } from "#/components/ui/back-icon";
+import { useAuthContext } from "#/contexts/auth-context";
 
 export const NewList = () => {
   const {
@@ -19,6 +20,8 @@ export const NewList = () => {
     handleUpdateListGroup,
     listGroupId,
   } = useProductsContext();
+
+  const { isAuthenticated } = useAuthContext();
 
   const debouncedFunction = debounce({ func: handleUpdateListGroup });
 
@@ -45,8 +48,13 @@ export const NewList = () => {
           />
           <TotalHeader />
         </section>
+        {isAuthenticated && (
+          <div>
+            <InfoItemSecondary text="Verify your email to save your list" />
+          </div>
+        )}
         <div className="w-full">
-          <div className="mt-[20px] space-y-2">
+          <div className="mt-[10px] space-y-2">
             <CSRWrapper>
               <AnimatePresence>
                 {selectedProductsArray.map((v) => (

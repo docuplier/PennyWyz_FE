@@ -1,3 +1,5 @@
+import { useAuthContext } from "#/contexts/auth-context";
+import { useProductsContext } from "#/contexts/product-context";
 import { useAppMutation } from "#/http";
 import { API_URLS } from "#/http/api-urls";
 import { getQeuryStatus } from "#/http/api/constants";
@@ -12,12 +14,19 @@ export type TListGroup = {
   id: string;
   updatedAt: string;
   createdAt: string;
+  itemsCount: number;
+  price: {
+    lowerRange: number;
+    upperRange: number;
+  };
 };
 
 export const useListGroup = () => {
+  const { selectedCountry } = useProductsContext();
+  const { isAuthenticated } = useAuthContext();
   const data = useQuery<{ data: TListGroup[] }>(
-    [API_URLS.GET_ALL_LIST_GROUP],
-    {}
+    [API_URLS.GET_ALL_LIST_GROUP({ country: selectedCountry.value })],
+    { enabled: isAuthenticated ? true : false }
   );
 
   const router = useRouter();
@@ -38,13 +47,16 @@ export const useListGroup = () => {
 
     const listName = `${newDate}-${generateRandomCharacters(3)}`;
 
-    createListGroupMutaion.mutate({ name: listName } as any, {
-      onSuccess: (data) => {
-        const newListGroup = data?.data?.data as TListGroup;
+    createListGroupMutaion.mutate(
+      { name: listName, country: selectedCountry.value } as any,
+      {
+        onSuccess: (data) => {
+          const newListGroup = data?.data?.data as TListGroup;
 
-        router.push(`/list/${newListGroup.id}`);
-      },
-    });
+          router.push(`/list/${newListGroup.id}`);
+        },
+      }
+    );
   };
 
   const handleDeleteListGroup = (listGroupId: string) => {

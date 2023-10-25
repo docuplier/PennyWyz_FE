@@ -5,7 +5,7 @@ import { MenuIcon, UserIcon } from "lucide-react";
 import { useAuthContext } from "#/contexts/auth-context";
 import { cn } from "#/lib/utils";
 import Link from "next/link";
-import { Ng, Us } from "react-flags-select";
+import { Gb, Ng, Us } from "react-flags-select";
 import {
   Popover,
   PopoverContent,
@@ -13,6 +13,8 @@ import {
 } from "@radix-ui/react-popover";
 import { CSRWrapper } from "./CSRWrapper";
 import { BackIcon } from "../ui/back-icon";
+import { useProductsContext } from "#/contexts/product-context";
+import { cx } from "class-variance-authority";
 
 const Header = ({
   className,
@@ -22,8 +24,7 @@ const Header = ({
   hasBackIcon?: boolean;
 }) => {
   const { openAuthDialog, isAuthenticated, logout } = useAuthContext();
-
-  const [selected, setSelected] = useState<CountryListProps>(COUNTRY_LIST[0]);
+  const { handleSelectedCountry, selectedCountry } = useProductsContext();
 
   return (
     <>
@@ -53,7 +54,7 @@ const Header = ({
         <section className="flex items-center gap-2">
           <Popover>
             <PopoverTrigger>
-              <CountrySelectButton icon={selected.icon} />
+              <CountrySelectButton icon={selectedCountry.icon} />
             </PopoverTrigger>
 
             <PopoverContent className="mt-[4px]">
@@ -62,7 +63,8 @@ const Header = ({
                   <CountrySelectButton
                     icon={c.icon}
                     key={c.value}
-                    onClick={() => setSelected(c)}
+                    onClick={() => handleSelectedCountry(c)}
+                    isSelected={c.value === selectedCountry.value}
                   />
                 ))}
               </div>
@@ -92,31 +94,46 @@ export default Header;
 const CountrySelectButton = ({
   icon: Icon,
   onClick,
+  isSelected,
 }: {
   icon: CountryFlagImgProp;
   onClick?: VoidFunction;
+  isSelected?: boolean;
 }) => {
   return (
     <div
-      onClick={onClick}
-      className="h-[24px] w-[24px] rounded-full border-[2px] border-pennywyz-yellow-t2  overflow-hidden
-   flex items-center relative
-  "
+      className={cx(
+        isSelected && "bg-pennywyz-yellow-t1 ",
+        "p-[5px] rounded cursor-pointer"
+      )}
     >
-      <Icon className="object-cover w-full h-full scale-150" />
+      <div
+        onClick={onClick}
+        className={cx(
+          `h-[24px] w-[24px] rounded-full border-[2px] border-pennywyz-yellow-t2  overflow-hidden
+         flex items-center relative
+             `
+        )}
+      >
+        <Icon className="object-cover w-full h-full scale-150" />
+      </div>
     </div>
   );
 };
 
-const COUNTRY_LIST: CountryListProps[] = [
-  {
-    value: "US",
-    icon: Us,
-  },
+export const COUNTRY_LIST: CountryListProps[] = [
   {
     value: "NG",
     icon: Ng,
   },
+  {
+    value: "UK",
+    icon: Gb,
+  },
+  // {
+  //   value: "US",
+  //   icon: Us,
+  // },
 ];
 
 export type CountryListProps = {

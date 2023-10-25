@@ -4,7 +4,7 @@ import { Typography } from "#/components/ui/typography";
 import { AnimatePresence } from "framer-motion";
 import React from "react";
 import { TListGroup } from "./hooks/useListGroup";
-import { getFormattedDate } from "#/lib/utils";
+import { getFormattedDate, getRangeFormmater } from "#/lib/utils";
 import { useRouter } from "next/router";
 
 type TListGroupContainer = {
@@ -31,12 +31,17 @@ export const ListGroupContainer = ({
               <section className="flex items-center justify-between w-full">
                 <Typography text={lg.name} />
                 <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
-                  <Typography text={3} size={10} />
+                  <Typography text={lg.itemsCount} size={10} />
                 </div>
               </section>
               <section className="flex items-center justify-between w-full">
                 <Typography text={getFormattedDate(lg.createdAt)} />
-                <Typography text="₦150,000" />
+                <Typography
+                  text={getRangeFormmater({
+                    lowerRange: lg.price.lowerRange,
+                    upperRange: lg.price.upperRange,
+                  })}
+                />
               </section>
             </div>
           </SwipeableCard>
