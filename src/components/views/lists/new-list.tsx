@@ -12,6 +12,7 @@ import { CSRWrapper } from "#/components/layouts/CSRWrapper";
 import { debounce } from "#/lib/utils";
 import { BackIcon } from "#/components/ui/back-icon";
 import { useAuthContext } from "#/contexts/auth-context";
+import { Loader } from "#/components/reusables/loader";
 
 export const NewList = () => {
   const {
@@ -19,9 +20,11 @@ export const NewList = () => {
     initalListGroupName,
     handleUpdateListGroup,
     listGroupId,
+    isListOwner,
+    isFetchingList,
   } = useProductsContext();
 
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, authUser } = useAuthContext();
 
   const debouncedFunction = debounce({ func: handleUpdateListGroup });
 
@@ -45,29 +48,35 @@ export const NewList = () => {
             handleSaveTitle={(name: string) =>
               debouncedFunction({ name, listGroupId })
             }
+            canEdit={isListOwner}
           />
           <TotalHeader />
         </section>
-        {isAuthenticated && (
+        {isAuthenticated && !authUser?.isVerified ? (
           <div>
             <InfoItemSecondary text="Verify your email to save your list" />
           </div>
-        )}
+        ) : null}
         <div className="w-full">
           <div className="mt-[10px] space-y-2">
             <CSRWrapper>
               <AnimatePresence>
-                {selectedProductsArray.map((v) => (
-                  <ListItem
-                    key={v.id}
-                    isExpandedId={isExpandedId}
-                    handleExpansion={handleExpansion}
-                    product={v}
-                  />
-                ))}
+                {isFetchingList ? (
+                  <Loader className="h-[200px]" />
+                ) : (
+                  selectedProductsArray.map((v) => (
+                    <ListItem
+                      key={v.id}
+                      isExpandedId={isExpandedId}
+                      handleExpansion={handleExpansion}
+                      product={v}
+                      canEdit={isListOwner}
+                    />
+                  ))
+                )}
               </AnimatePresence>
             </CSRWrapper>
-            <SearchBar placeholder="New item" />
+            {isListOwner && <SearchBar placeholder="New item" />}
           </div>
         </div>
         <div className="py-[20px] flex flex-col items-center gap-2 justify-center">

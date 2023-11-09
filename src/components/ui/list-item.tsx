@@ -25,11 +25,13 @@ export type ListItemProps = {
   product: IProduct;
   isExpandedId: string;
   handleExpansion: (expandedId: string) => void;
+  canEdit: boolean;
 };
 export const ListItem = ({
   product,
   isExpandedId,
   handleExpansion,
+  canEdit,
 }: ListItemProps) => {
   const { handleProductDelete } = useProductsContext();
 
@@ -69,7 +71,7 @@ export const ListItem = ({
           />
         </SwipeAction>
         <motion.div
-          drag="x"
+          {...(canEdit ? { drag: "x" } : {})}
           dragConstraints={{ left: 0, right: 0 }}
           onDragEnd={(_, info) => {
             handleDragEnd(info, { item: "afa" });
@@ -83,13 +85,16 @@ export const ListItem = ({
           <div
             className="flex items-center gap-[10px] px-[12px] "
             onClick={(e) => {
-              if (!checkboxRef?.current?.contains(e.target))
+              if (!checkboxRef?.current?.contains(e.target) && canEdit) {
                 handleExpansion(product.id?.toString());
+              }
             }}
           >
-            <div ref={checkboxRef}>
-              <CheckBox id={product.id?.toString()} />
-            </div>
+            {canEdit && (
+              <div ref={checkboxRef}>
+                <CheckBox id={product.id?.toString()} />
+              </div>
+            )}
             <Typography text={product.name} className="flex-1 capitalize" />
             <div className="flex-none flex flex-col items-end gap-[5px]">
               <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
@@ -135,12 +140,12 @@ export const ListItem = ({
         </SwipeAction>
       </motion.section>
       <QuantityDialog
-        open={open}
+        open={open && canEdit}
         product={product}
         handleClose={toggleDialog}
       />
       <DeleteDialog
-        open={openDeleteDialog}
+        open={openDeleteDialog && canEdit}
         handleClose={toggleDeleteDialog}
         handleDelete={() =>
           handleProductDelete({ productId: product.productId?.toString() })

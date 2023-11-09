@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { API_URLS } from "../api-urls";
 import { getQeuryStatus } from "./constants";
 import { useInfiniteFetch } from "../hooks";
+import { TAuthUser } from "#/contexts/auth-context";
 
 export const useGetProducts = ({
   search,
@@ -63,4 +64,15 @@ export type IProduct = {
   productId: number;
   listContentId: number;
   newUpdatedAt?: Date;
+};
+
+export type TSingleListGroup = {
+  name: string;
+  userId: string;
+  id: string;
+  updatedAt: string;
+  createdAt: string;
+  country: string;
+  ListContents: IListProduct[];
+  User: TAuthUser;
 };

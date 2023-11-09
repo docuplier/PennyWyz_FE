@@ -30,6 +30,17 @@ export type TAuthUser = {
   username?: string;
 };
 
+export type TTokenUser = {
+  id: string;
+  isVerified: boolean;
+  email: string;
+  firstName: string | null;
+  socialId: string | null;
+  socialProvider: string | null;
+  createdAt: string;
+  lastName: string | null;
+};
+
 export type TAuthenticateUser = {
   user: Record<string, any>;
   token: {
@@ -39,7 +50,7 @@ export type TAuthenticateUser = {
 };
 
 export type AuthContextType = {
-  authUser: TAuthUser;
+  authUser: TTokenUser;
   getUser: () => any;
   handleAuthentication: ({ user, token }: TAuthenticateUser) => void;
   logout: () => void;
@@ -63,8 +74,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isAuthenticated, setIsAuthenticated] = useState(
     !!getCookie(STORAGE_KEYS.AUTH_TOKEN)
   );
-  const [authUser, setAuthUser] = useState<TAuthUser>(
-    isAuthenticated ? getFromStore("AUTH_USER") : ({} as TAuthUser)
+  const [authUser, setAuthUser] = useState<TTokenUser>(
+    isAuthenticated ? getFromStore("AUTH_USER") : ({} as TTokenUser)
   );
 
   const softReload = () => router.reload();
@@ -74,6 +85,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     addToStore("AUTH_USER", user);
     setCookie(STORAGE_KEYS.AUTH_TOKEN, token.value, token.expiryDate);
     setIsAuthenticated(true);
+    setAuthUser(user as TTokenUser);
     // softReload();
   };
 

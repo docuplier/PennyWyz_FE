@@ -12,6 +12,8 @@ import React, {
 import { useHydrationContext } from "./hydration-provider";
 import { COUNTRY_LIST, CountryListProps } from "#/components/layouts/header";
 import { formatNumberToCurrency, getRangeFormmater } from "#/lib/utils";
+import { useRouter } from "next/router";
+import { useAuthContext } from "./auth-context";
 
 export type ProductsContextType = {
   handleSearchValue: (search: string) => void;
@@ -42,6 +44,8 @@ export type ProductsContextType = {
   listGroupId: string;
   handleSelectedCountry: (country: CountryListProps) => void;
   selectedCountry: CountryListProps;
+  isListOwner: boolean;
+  isFetchingList: boolean;
 };
 
 const ProductsContext = createContext<ProductsContextType>(
@@ -55,9 +59,16 @@ const { getFromStore, clearStore, addToStore } = AppStorage();
 export function ProductsProvider({ children }: { children: ReactNode }) {
   const [searchValue, setSearchValue] = React.useState("");
 
-  const params = useParams();
+  const { isAuthenticated } = useAuthContext();
 
-  const listGroupId = params?.id as string;
+  const params = useParams();
+  const router = useRouter();
+
+  const acceptedListGroupRoute = ["/list/[id]", "/list/public/[id]"].includes(
+    router.pathname
+  );
+
+  const listGroupId = acceptedListGroupRoute ? (params?.id as string) : "";
 
   const hasListGroupId = !!listGroupId;
   const { hydrated } = useHydrationContext();
@@ -72,19 +83,19 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     React.useState<CountryListProps>(COUNTRY_LIST[0]);
 
   const {
-    dbListQuery,
     getDbListQuery,
     updateListItemMutation,
     addListItemMutation,
     deleteListItemMutation,
     handleUpdateListGroup,
     dbListGroupQuery,
+    isListOwner,
   } = useHandleListItem(listGroupId);
 
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (hydrated) {
-        if (hasListGroupId && !dbListQuery.isFetching) {
+        if (hasListGroupId && !dbListGroupQuery.isFetching) {
           setSelectedProducts(getDbListQuery());
         }
         if (!hasListGroupId) {
@@ -97,7 +108,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
       clearTimeout(timeoutId);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [hasListGroupId, dbListQuery.isFetching, hydrated]);
+  }, [hasListGroupId, dbListGroupQuery.isFetching, hydrated]);
 
   useEffect(() => {
     if (listGroupId) {
@@ -174,7 +185,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
           } as any,
           {
             onSuccess: () => {
-              dbListQuery.refetch();
+              dbListGroupQuery.refetch();
             },
           }
         );
@@ -261,6 +272,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         handleUpdateListGroup,
         handleSelectedCountry,
         selectedCountry,
+        isListOwner,
+        isFetchingList: dbListGroupQuery.isLoading && !!isAuthenticated,
       }}
     >
       {children}

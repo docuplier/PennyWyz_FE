@@ -5,8 +5,10 @@ export const API_URLS = {
 
   // AUTH
   LOGIN: "/users/login",
+  GOOGLE_LOGIN: "/users/social/google",
   // AUTH
   SIGN_UP: "/users",
+  VERIFY_USER: `/users/`,
 
   //LIST-GROUP
   GET_ALL_LIST_GROUP: ({ country }: { country: string }) =>

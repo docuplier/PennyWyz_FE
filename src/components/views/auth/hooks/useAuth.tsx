@@ -65,6 +65,8 @@ export const useAuth = () => {
 
     const decodedToken = getDecodedToken(result?.accessToken);
 
+    const user = result?.user;
+
     if (!decodedToken) return;
 
     const { exp } = decodedToken;
@@ -72,7 +74,7 @@ export const useAuth = () => {
 
     handleAuthentication({
       token: { value: result?.accessToken as string, expiryDate },
-      user: result,
+      user,
     });
 
     showToast({ title: "Successfully logged in" });

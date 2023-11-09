@@ -3,6 +3,7 @@ import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
 
 import { cn } from "#/lib/utils";
+import { Loader } from "../reusables/loader";
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center rounded-md text-sm font-normal ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 dark:ring-offset-slate-950 dark:focus-visible:ring-slate-300 max-w-max ",
@@ -10,7 +11,7 @@ const buttonVariants = cva(
     variants: {
       variant: {
         default:
-          "bg-pennywyz-yellow-t2 text-black hover:bg-yellow-600 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90",
+          "bg-pennywyz-yellow-t2 text-black hover:bg-yellow-600 dark:bg-slate-50 dark:text-slate-900 dark:hover:bg-slate-50/90 min-w-[100px]",
         destructive:
           "bg-red-500 text-slate-50 hover:bg-red-500/90 dark:bg-red-900 dark:text-slate-50 dark:hover:bg-red-900/90",
         outline:
@@ -67,7 +68,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         ref={ref}
         {...props}
       >
-        {isLoading ? "Loading..." : children}
+        {isLoading ? <Loader color="white" /> : children}
       </Comp>
     );
   }

@@ -1,4 +1,9 @@
-import { IListProduct, IProduct, useAppMutation } from "#/http";
+import {
+  IListProduct,
+  IProduct,
+  TSingleListGroup,
+  useAppMutation,
+} from "#/http";
 import { API_URLS } from "#/http/api-urls";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "../../auth/hooks/useAuth";
@@ -7,17 +12,17 @@ import { TListGroup } from "../../all-lists/hooks/useListGroup";
 import { useEffect, useState } from "react";
 
 export const useHandleListItem = (listGroupId: string) => {
-  const { isAuthenticated } = useAuthContext();
-  const enableQuery = isAuthenticated && !!listGroupId;
+  const { isAuthenticated, authUser } = useAuthContext();
+  const enableQuery = !!listGroupId;
 
-  const dbListQuery = useQuery<{ data: IListProduct[] }>(
-    [API_URLS.GET_ALL_LIST_CONTENTS(listGroupId)],
-    {
-      enabled: enableQuery ? true : false,
-    }
-  );
+  // const dbListQuery = useQuery<{ data: IListProduct[] }>(
+  //   [API_URLS.GET_ALL_LIST_CONTENTS(listGroupId)],
+  //   {
+  //     enabled: enableQuery ? true : false,
+  //   }
+  // );
 
-  const dbListGroupQuery = useQuery<{ data: TListGroup }>(
+  const dbListGroupQuery = useQuery<{ data: TSingleListGroup }>(
     [API_URLS.GET_SINGLE_LIST_GROUP(listGroupId)],
     {
       enabled: enableQuery ? true : false,
@@ -43,25 +48,28 @@ export const useHandleListItem = (listGroupId: string) => {
   });
 
   const getDbListQuery = () => {
-    return (dbListQuery.data?.data ?? [])?.reduce((acc, curr) => {
-      const { categoryId, subcategoryId, country, name } = curr.Product;
-      acc[curr.Product.id] = {
-        priceData: curr.Product.priceData,
-        categoryId,
-        subcategoryId,
-        country,
-        createdAt: curr.createdAt,
-        listId: curr.listId,
-        quantity: curr.quantity,
-        name,
-        id: curr.id,
-        updatedAt: curr.updatedAt,
-        listContentId: curr.id,
-        productId: curr.Product.id,
-      };
+    return (dbListGroupQuery.data?.data?.ListContents ?? [])?.reduce(
+      (acc, curr) => {
+        const { categoryId, subcategoryId, country, name } = curr.Product;
+        acc[curr.Product.id] = {
+          priceData: curr.Product.priceData,
+          categoryId,
+          subcategoryId,
+          country,
+          createdAt: curr.createdAt,
+          listId: curr.listId,
+          quantity: curr.quantity,
+          name,
+          id: curr.id,
+          updatedAt: curr.updatedAt,
+          listContentId: curr.id,
+          productId: curr.Product.id,
+        };
 
-      return acc;
-    }, {} as { [key in string]: IProduct });
+        return acc;
+      },
+      {} as { [key in string]: IProduct }
+    );
   };
 
   const handleUpdateListGroup = ({
@@ -77,14 +85,17 @@ export const useHandleListItem = (listGroupId: string) => {
     } as any);
   };
 
+  const isListOwner = dbListGroupQuery?.data?.data?.userId === authUser?.id;
+
   return {
     getDbListQuery,
-    dbListQuery,
+    // dbListQuery,
     addListItemMutation,
     updateListItemMutation,
     deleteListItemMutation,
     handleUpdateListGroup,
     dbListGroupQuery,
+    isListOwner,
 
     // updateListItemMutation,
     // deleteListItemMutation,

@@ -5,14 +5,21 @@ import { useAuthContext } from "#/contexts/auth-context";
 import { useListGroup } from "#/components/views/all-lists/hooks/useListGroup";
 import { useRouter } from "next/router";
 import { NotAccessibleToAuthUsers } from "#/components/layouts/protectected-route";
+import { Fragment } from "react";
 
-export default function Home() {
+export default function Home({
+  accessibleToAuthUsers = false,
+}: {
+  accessibleToAuthUsers: boolean;
+}) {
   const { isAuthenticated } = useAuthContext();
   const { creatNewListGroup } = useListGroup();
   const router = useRouter();
 
+  const Wrapper = accessibleToAuthUsers ? Fragment : NotAccessibleToAuthUsers;
+
   return (
-    <NotAccessibleToAuthUsers>
+    <Wrapper>
       <AppLayout
         desktopHeader={
           <div className="pt-[38px]">
@@ -33,6 +40,6 @@ export default function Home() {
           />
         </div>
       </AppLayout>
-    </NotAccessibleToAuthUsers>
+    </Wrapper>
   );
 }

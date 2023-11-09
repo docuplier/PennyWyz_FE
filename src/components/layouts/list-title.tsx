@@ -6,9 +6,11 @@ import { useState } from "react";
 export const ListTitle = ({
   initialValue,
   handleSaveTitle,
+  canEdit = false,
 }: {
   initialValue: string;
   handleSaveTitle: (title: string) => void;
+  canEdit?: boolean;
 }) => {
   const { toggleShareDialog } = useAlertDialog();
   const [value, setValue] = useState(initialValue);
@@ -32,9 +34,12 @@ export const ListTitle = ({
               handleSaveTitle(e.target.value);
             }
           }}
-          className="border-nne foucs:border-none focus:outline-none text-[24px] "
+          disabled={!canEdit}
+          className="border-none bg-transparent foucs:border-none focus:outline-none text-[24px] "
         />
-        <PencilLine size={20} className="text-pennywyz-ash-t2" />
+        {canEdit ? (
+          <PencilLine size={20} className="text-pennywyz-ash-t2" />
+        ) : null}
       </section>
       <section>
         <button>

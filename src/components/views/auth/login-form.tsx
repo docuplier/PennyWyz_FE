@@ -10,6 +10,9 @@ import { ReactNode } from "react";
 import { AuthViewEnums } from "./auth-dialog";
 import { useForm } from "react-hook-form";
 import { TSignup, useAuth } from "./hooks/useAuth";
+import Link from "next/link";
+import { API_URLS } from "#/http/api-urls";
+import { internalAxios } from "#/http/http";
 
 export const LoginForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
@@ -99,7 +102,13 @@ export const LoginWithSocial = ({ text = "Login with" }: { text?: string }) => {
       <div className="flex items-center justify-between">
         <Typography text={text} />
         <div className="flex items-center gap-[24px]">
-          <SocialIcon icon={<GoogleLogo height={38} width={38} />} />
+          <button
+          // onClick={() => {
+          //   internalAxios.get(API_URLS.GOOGLE_LOGIN);
+          // }}
+          >
+            <SocialIcon icon={<GoogleLogo height={38} width={38} />} />
+          </button>
           <SocialIcon icon={<FacebookLogo height={38} width={38} />} />
         </div>
       </div>

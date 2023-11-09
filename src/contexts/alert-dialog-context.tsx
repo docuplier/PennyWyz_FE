@@ -7,6 +7,7 @@ export type TAlertDialog = {
   title?: string;
   iconType?: "success" | "error";
   content?: string | JSX.Element;
+  onCloseCallBack?: VoidFunction;
 };
 
 type AlertDialogContexttype = {
@@ -41,7 +42,10 @@ export function AlertDialogProvider({ children }: { children: ReactNode }) {
       {children}
       <AlertDialog
         open={open && !!dialogState}
-        handleClose={toggleDialog}
+        handleClose={() => {
+          dialogState?.onCloseCallBack?.();
+          toggleDialog();
+        }}
         data={dialogState as TAlertDialog}
       />
       <ShareDialog open={openShareDialog} handleClose={toggleShareDialog} />
