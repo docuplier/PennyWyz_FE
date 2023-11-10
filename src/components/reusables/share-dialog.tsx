@@ -20,6 +20,8 @@ import { useForm } from "react-hook-form";
 import { Button } from "../ui/button";
 import { TextDivider } from "../ui/text-divider";
 import { useParams } from "next/navigation";
+import { useAppMutation } from "#/http";
+import { API_URLS } from "#/http/api-urls";
 
 const sms = new SocialMediaShare();
 
@@ -32,17 +34,41 @@ export const ShareDialog = ({
 }) => {
   const params = useParams();
 
-  const url = sms.getPageUrl(`list/${params?.id}`);
+  const url = sms.getPageUrl(`list/public/${params?.id}`);
 
   const { copy } = useClipboard();
+
+  const shareViaEmailMutation = useAppMutation({
+    url: API_URLS.SEND_LIST_INITIAL,
+    hasIdParams: true,
+  });
 
   const {
     register,
     formState: { errors },
     handleSubmit,
+    reset,
   } = useForm<{ email: string }>();
 
-  const onSubmit = (data: any) => {};
+  const onSubmit = (data: any) => {
+    try {
+      shareViaEmailMutation.mutate(
+        {
+          idParams: `/${params?.id}/send`,
+          emails: [data.email],
+        } as any,
+        {
+          onSuccess: () => {
+            reset();
+            showToast({ title: "List successfully shared" });
+          },
+          onError: () => {
+            showToast({ title: "Error sharing list", type: "error" });
+          },
+        }
+      );
+    } catch (e) {}
+  };
 
   return (
     <CustomDialog

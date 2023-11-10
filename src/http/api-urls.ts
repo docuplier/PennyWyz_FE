@@ -23,4 +23,8 @@ export const API_URLS = {
   ADD_LIST_ITEM: `/list-contents`,
   UPDATE_LIST_ITEM: `/list-contents`,
   DELETE_LIST_ITEM: (listId: string) => `/list-contents/${listId}`,
+
+  //
+  SEND_LIST_INITIAL: `/lists/`,
+  SEND_LIST: (id: string) => `/lists/${id}/send`,
 };

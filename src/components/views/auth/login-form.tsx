@@ -13,6 +13,7 @@ import { TSignup, useAuth } from "./hooks/useAuth";
 import Link from "next/link";
 import { API_URLS } from "#/http/api-urls";
 import { internalAxios } from "#/http/http";
+import { ENV_KEYS } from "#/lib/env-keys";
 
 export const LoginForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
@@ -97,18 +98,21 @@ export const LoginForm = () => {
 };
 
 export const LoginWithSocial = ({ text = "Login with" }: { text?: string }) => {
+  const getLoginWithGoogle = `${ENV_KEYS.API_URL}/${API_URLS.GOOGLE_LOGIN}`;
+
   return (
     <section className="space-y-[32px]">
       <div className="flex items-center justify-between">
         <Typography text={text} />
         <div className="flex items-center gap-[24px]">
-          <button
-          // onClick={() => {
-          //   internalAxios.get(API_URLS.GOOGLE_LOGIN);
-          // }}
+          <a
+            // onClick={() => {
+            //   internalAxios.get(API_URLS.GOOGLE_LOGIN);
+            // }}
+            href={getLoginWithGoogle}
           >
             <SocialIcon icon={<GoogleLogo height={38} width={38} />} />
-          </button>
+          </a>
           <SocialIcon icon={<FacebookLogo height={38} width={38} />} />
         </div>
       </div>
