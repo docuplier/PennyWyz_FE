@@ -21,7 +21,6 @@ export const useVerifyUser = () => {
       } as any,
       {
         onSuccess: (data) => {
-          console.log({ data });
           alertDialog.render({
             title: "Email Verified",
             iconType: "success",
