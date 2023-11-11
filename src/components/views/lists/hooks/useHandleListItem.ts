@@ -64,6 +64,7 @@ export const useHandleListItem = (listGroupId: string) => {
           updatedAt: curr.updatedAt,
           listContentId: curr.id,
           productId: curr.Product.id,
+          checked: curr.checked,
         };
 
         return acc;

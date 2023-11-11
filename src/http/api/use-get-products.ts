@@ -31,12 +31,13 @@ export type IListProduct = {
     };
     id: number;
     name: number;
-    country: number;
+    country: string;
     createdAt: string;
     updatedAt: string;
     categoryId: 1;
     subcategoryId: null;
   };
+  checked: boolean;
   createdAt: string;
   updatedAt: string;
   quantity: number;
