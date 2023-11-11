@@ -42,7 +42,7 @@ const GET_CURRENCY_DETAILS = {
     currencyCode: "GBP",
     language: "en-GB",
     removeCurrency: false,
-    precision: 8,
+    precision: 2,
   },
 };
 
