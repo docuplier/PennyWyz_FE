@@ -58,24 +58,26 @@ const Header = ({
           </Link>
         </div>
         <section className="flex items-center gap-2">
-          <Popover>
-            <PopoverTrigger>
-              <CountrySelectButton icon={selectedCountry.icon} />
-            </PopoverTrigger>
+          <div className="z-[300]clear">
+            <Popover>
+              <PopoverTrigger>
+                <CountrySelectButton icon={selectedCountry.icon} />
+              </PopoverTrigger>
 
-            <PopoverContent className="mt-[4px]">
-              <div className="border p-[10px] bg-white space-y-[15px] rounded-[8px] shadow-md ">
-                {COUNTRY_LIST.map((c) => (
-                  <CountrySelectButton
-                    icon={c.icon}
-                    key={c.value}
-                    onClick={() => handleSelectedCountry(c)}
-                    isSelected={c.value === selectedCountry.value}
-                  />
-                ))}
-              </div>
-            </PopoverContent>
-          </Popover>
+              <PopoverContent className="mt-[4px]">
+                <div className="border p-[10px] bg-white space-y-[15px] rounded-[8px] shadow-md ">
+                  {COUNTRY_LIST.map((c) => (
+                    <CountrySelectButton
+                      icon={c.icon}
+                      key={c.value}
+                      onClick={() => handleSelectedCountry(c)}
+                      isSelected={c.value === selectedCountry.value}
+                    />
+                  ))}
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
 
           <CSRWrapper>
             {isAuthenticated ? (
