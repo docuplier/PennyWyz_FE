@@ -56,6 +56,7 @@ export type AuthContextType = {
   logout: () => void;
   isAuthenticated?: boolean;
   openAuthDialog: () => void;
+  closeAuthDialog: () => void;
   shouldPerformAuthAction: ({ action }: { action: VoidFunction }) => void;
   navigateToAuthRoute: (pathName: AuthViewEnums) => void;
 };
@@ -65,7 +66,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 const { getFromStore, clearStore, addToStore } = AppStorage();
 
 export function AuthProvider({ children }: { children: ReactNode }) {
-  const { open, toggleDialog } = useDialog();
+  const { open, toggleDialog, handleClose, handleOpen } = useDialog();
   const router = useRouter();
 
   const urlSearchParams = useSearchParams()!;
@@ -111,7 +112,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const handleCloseAuthDialog = () => {
-    toggleDialog();
+    handleClose();
+    resetDialog();
+  };
+  const handleOpenAuthDialog = () => {
+    handleOpen();
     resetDialog();
   };
 
@@ -147,7 +152,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         getUser,
         isAuthenticated,
         handleAuthentication,
-        openAuthDialog: handleCloseAuthDialog,
+        openAuthDialog: handleOpenAuthDialog,
+        closeAuthDialog: handleCloseAuthDialog,
         shouldPerformAuthAction,
         navigateToAuthRoute,
       }}

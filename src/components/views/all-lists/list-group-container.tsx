@@ -6,6 +6,7 @@ import React from "react";
 import { TListGroup } from "./hooks/useListGroup";
 import { getFormattedDate, getRangeFormmater } from "#/lib/utils";
 import { useRouter } from "next/router";
+import { useProductsContext } from "#/contexts/product-context";
 
 type TListGroupContainer = {
   listGroup: TListGroup[];
@@ -17,6 +18,7 @@ export const ListGroupContainer = ({
   handleDeleteListGroup,
 }: TListGroupContainer) => {
   const router = useRouter();
+  const { countryToUse } = useProductsContext();
 
   return (
     <CSRWrapper>
@@ -40,6 +42,7 @@ export const ListGroupContainer = ({
                   text={getRangeFormmater({
                     lowerRange: lg.price.lowerRange,
                     upperRange: lg.price.upperRange,
+                    country: countryToUse,
                   })}
                 />
               </section>

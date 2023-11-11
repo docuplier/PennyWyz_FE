@@ -9,6 +9,7 @@ import { LucideIcon, MinusCircleIcon, PlusCircleIcon } from "lucide-react";
 import { Button } from "./button";
 import { IProduct } from "#/http";
 import { useProductsContext } from "#/contexts/product-context";
+import { cx } from "class-variance-authority";
 
 const BTN_WIDTH = 150;
 
@@ -33,7 +34,7 @@ export const ListItem = ({
   handleExpansion,
   canEdit,
 }: ListItemProps) => {
-  const { handleProductDelete } = useProductsContext();
+  const { handleProductDelete, handleCheckProduct } = useProductsContext();
 
   const [isDragging, setIsDragging] = useState(false);
   const { open, toggleDialog } = useDialog();
@@ -92,15 +93,35 @@ export const ListItem = ({
           >
             {canEdit && (
               <div ref={checkboxRef}>
-                <CheckBox id={product.id?.toString()} />
+                <CheckBox
+                  id={product.id?.toString()}
+                  onChange={(e) => {
+                    handleCheckProduct({ productId: product.id?.toString() });
+                  }}
+                  checked={product.checked}
+                />
               </div>
             )}
-            <Typography text={product.name} className="flex-1 capitalize" />
-            <div className="flex-none flex flex-col items-end gap-[5px]">
+            <Typography
+              text={product.name}
+              className={cx(
+                "flex-1 capitalize",
+                product.checked && "opacity-50"
+              )}
+            />
+            <div
+              className={cx(
+                "flex-none flex flex-col items-end gap-[5px]",
+                product.checked && "opacity-50"
+              )}
+            >
               <div className="w-[14px] h-[14px] rounded-full border flex justify-center items-center border-black">
                 <Typography text={product.quantity} size={10} />
               </div>
-              <Typography text={getPriceRange(product.priceData)} size={12} />
+              <Typography
+                text={getPriceRange(product.priceData, product.country)}
+                size={12}
+              />
             </div>
           </div>
           <AnimatePresence>

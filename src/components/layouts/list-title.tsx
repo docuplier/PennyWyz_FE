@@ -1,4 +1,5 @@
 import { useAlertDialog } from "#/contexts/alert-dialog-context";
+import { useAuthContext } from "#/contexts/auth-context";
 import { debounce } from "#/lib/utils";
 import { PencilLine, Share2Icon } from "lucide-react";
 import { useState } from "react";
@@ -14,6 +15,7 @@ export const ListTitle = ({
 }) => {
   const { toggleShareDialog } = useAlertDialog();
   const [value, setValue] = useState(initialValue);
+  const { isAuthenticated } = useAuthContext();
 
   const handleKeyDown = (evt: any) => {
     setValue(evt.target.value);
@@ -42,9 +44,11 @@ export const ListTitle = ({
         ) : null}
       </section>
       <section>
-        <button>
-          <Share2Icon size={20} onClick={toggleShareDialog} />
-        </button>
+        {isAuthenticated && (
+          <button>
+            <Share2Icon size={20} onClick={toggleShareDialog} />
+          </button>
+        )}
       </section>
     </div>
   );

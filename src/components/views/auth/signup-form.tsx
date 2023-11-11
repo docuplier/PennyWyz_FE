@@ -42,7 +42,7 @@ export const SignupForm = () => {
         errorMessage={errors["password"]?.message}
         autoComplete="true"
       />
-      <div className="flex items-center gap-2">
+      {/* <div className="flex items-center gap-2">
         <CheckBox id="rememberMe" />
         <Label
           htmlFor="rememberMe"
@@ -50,7 +50,7 @@ export const SignupForm = () => {
         >
           Remember me
         </Label>
-      </div>
+      </div> */}
       <div className="flex items-center gap-2">
         <CheckBox id="terms" />
         <Label htmlFor="terms" className="text-[12px] font-normal">

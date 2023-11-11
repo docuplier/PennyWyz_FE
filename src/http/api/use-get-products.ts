@@ -54,7 +54,7 @@ export type IProduct = {
   };
   id: number;
   name: number;
-  country: number;
+  country: string;
   createdAt: string;
   updatedAt: string;
   categoryId: 1;
@@ -64,6 +64,7 @@ export type IProduct = {
   productId: number;
   listContentId: number;
   newUpdatedAt?: Date;
+  checked: boolean;
 };
 
 export type TSingleListGroup = {

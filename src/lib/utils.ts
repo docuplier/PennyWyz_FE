@@ -11,16 +11,45 @@ export const delayInSeconds = (seconds: number) => {
   return new Promise((resolve) => setTimeout(resolve, seconds * 1000));
 };
 
-export const getPriceRange = (price: IProduct["priceData"]) => {
-  const lowRange = formatNumberToCurrency({ number: price.lowerRange });
-  const highRange = formatNumberToCurrency({ number: price.upperRange });
+export const getPriceRange = (
+  price: IProduct["priceData"],
+  country: string
+) => {
+  const currencyData =
+    GET_CURRENCY_DETAILS[
+      country.toUpperCase() as keyof typeof GET_CURRENCY_DETAILS
+    ] ?? GET_CURRENCY_DETAILS.NG;
+
+  const lowRange = formatNumberToCurrency({
+    number: price.lowerRange,
+    ...currencyData,
+  });
+  const highRange = formatNumberToCurrency({
+    number: price.upperRange,
+    ...currencyData,
+  });
   return `${lowRange} - ${highRange}`;
+};
+
+const GET_CURRENCY_DETAILS = {
+  NG: {
+    currencyCode: "NGN",
+    language: "en-us",
+    removeCurrency: true,
+    precision: 0,
+  },
+  UK: {
+    currencyCode: "GBP",
+    language: "en-GB",
+    removeCurrency: false,
+    precision: 8,
+  },
 };
 
 export const formatNumberToCurrency = ({
   number,
   currencyCode = "NGN",
-  precision = 0,
+  precision,
   language = "en-US",
   removeCurrency = true,
   currencyElement = "₦",
@@ -35,7 +64,7 @@ export const formatNumberToCurrency = ({
   const formatter = new Intl.NumberFormat(language, {
     style: "currency",
     currency: currencyCode,
-    maximumFractionDigits: precision ? 2 : 20,
+    maximumFractionDigits: precision ?? 8,
   });
 
   let value = Number(number);
@@ -143,11 +172,19 @@ export const generateRandomCharacters = (length: number) => {
 export const getRangeFormmater = ({
   upperRange,
   lowerRange,
+  country,
 }: {
   upperRange: number;
   lowerRange: number;
+  country: string;
 }) => {
+  const currencyData =
+    GET_CURRENCY_DETAILS[
+      country?.toUpperCase() as keyof typeof GET_CURRENCY_DETAILS
+    ] ?? GET_CURRENCY_DETAILS.NG;
+
   return `${formatNumberToCurrency({
     number: lowerRange,
-  })} - ${formatNumberToCurrency({ number: upperRange })}`;
+    ...currencyData,
+  })} - ${formatNumberToCurrency({ number: upperRange, ...currencyData })}`;
 };

@@ -54,7 +54,7 @@ export const CustomDialog = ({
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent
         className={cn(
-          "sm:max-w-[425px] rounded-[16px] p-0",
+          "sm:max-w-[425px] rounded-[16px] p-0 ",
           className,
           dialogVariants({ size })
         )}

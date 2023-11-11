@@ -53,13 +53,13 @@ export const LoginForm = () => {
         />
         <div className="!-mt-[1px] flex items-center justify-between">
           <section className="flex items-center gap-2">
-            <CheckBox id="rememberMe" />
+            {/* <CheckBox id="rememberMe" />
             <Label
               htmlFor="rememberMe"
               className="text-[12px] text-pennywyz-ash-t2 font-normal"
             >
               Remember me
-            </Label>
+            </Label> */}
           </section>
           <button className="hover:underline text-pennywyz-yellow-t2 text-[12px]">
             <Typography text="Forgot Password?" size={12} />

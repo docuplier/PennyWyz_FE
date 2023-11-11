@@ -8,12 +8,14 @@ import React, {
   useContext,
   useEffect,
   useMemo,
+  useRef,
 } from "react";
 import { useHydrationContext } from "./hydration-provider";
 import { COUNTRY_LIST, CountryListProps } from "#/components/layouts/header";
 import { formatNumberToCurrency, getRangeFormmater } from "#/lib/utils";
 import { useRouter } from "next/router";
 import { useAuthContext } from "./auth-context";
+import { useDebouncedValue } from "@mantine/hooks";
 
 export type ProductsContextType = {
   handleSearchValue: (search: string) => void;
@@ -46,6 +48,8 @@ export type ProductsContextType = {
   selectedCountry: CountryListProps;
   isListOwner: boolean;
   isFetchingList: boolean;
+  handleCheckProduct: ({ productId }: { productId: string }) => void;
+  countryToUse: string;
 };
 
 const ProductsContext = createContext<ProductsContextType>(
@@ -59,10 +63,14 @@ const { getFromStore, clearStore, addToStore } = AppStorage();
 export function ProductsProvider({ children }: { children: ReactNode }) {
   const [searchValue, setSearchValue] = React.useState("");
 
-  const { isAuthenticated } = useAuthContext();
+  const [debouncedSearchValue] = useDebouncedValue(searchValue, 500);
+
+  const { isAuthenticated, openAuthDialog } = useAuthContext();
 
   const params = useParams();
   const router = useRouter();
+
+  const hasShownRegisterPopup = useRef(false);
 
   const acceptedListGroupRoute = ["/list/[id]", "/list/public/[id]"].includes(
     router.pathname
@@ -95,11 +103,18 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (hydrated) {
-        if (hasListGroupId && !dbListGroupQuery.isFetching) {
+        if (
+          hasListGroupId &&
+          !dbListGroupQuery.isFetching &&
+          acceptedListGroupRoute
+        ) {
           setSelectedProducts(getDbListQuery());
-        }
-        if (!hasListGroupId) {
-          setSelectedProducts(getFromStore("USER_PRODUCTS") ?? {});
+        } else if (!acceptedListGroupRoute) {
+          if (isAuthenticated) {
+            setSelectedProducts({});
+          } else {
+            setSelectedProducts(getFromStore("USER_PRODUCTS") ?? {});
+          }
         }
       }
     }, 100);
@@ -121,8 +136,13 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   const [open, setOpen] = React.useState(false);
 
   const selectedProductsArray = useMemo(() => {
-    return sortWithUpdatedAt(Object.values(selectedProducts));
+    return sortWithUpdatedAtAndChecked(Object.values(selectedProducts));
   }, [selectedProducts]);
+
+  const countryToUse =
+    dbListGroupQuery?.data?.data?.country ??
+    selectedProductsArray[0]?.country ??
+    selectedCountry.value;
 
   const selectedProductsTotal = useMemo(() => {
     const mappedTotal = selectedProductsArray.reduce(
@@ -137,14 +157,20 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     return getRangeFormmater({
       upperRange: mappedTotal.upperRange,
       lowerRange: mappedTotal.lowerRange,
+      country: countryToUse,
     });
   }, [selectedProductsArray]);
 
-  const isEnabled = searchValue?.trim().length >= SEARCH_SUGGESTION_LENGTH;
+  const isEnabled =
+    debouncedSearchValue?.trim().length >= SEARCH_SUGGESTION_LENGTH;
+
+  // For auth user, we use the list group country
+  // For non auth user, we use the country of the first item
+  // if non auth user delete all list, we fall back to the country selected
 
   const getProducts = useGetProducts({
-    search: searchValue,
-    country: selectedCountry.value,
+    search: debouncedSearchValue,
+    country: countryToUse,
     enabled: isEnabled,
   });
 
@@ -237,6 +263,16 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     setSelectedProducts(newProducts);
   };
 
+  const handleCheckProduct = ({ productId }: { productId: string }) => {
+    const newProducts = { ...selectedProducts };
+    const selectedProduct = newProducts[productId];
+    if (selectedProduct) {
+      selectedProduct.checked = !selectedProduct.checked;
+      addToStore("USER_PRODUCTS", newProducts);
+      setSelectedProducts(newProducts);
+    }
+  };
+
   const handleProductDelete = ({ productId }: { productId: string }) => {
     const newProducts = { ...selectedProducts };
     const deletedProduct = newProducts[productId];
@@ -252,6 +288,19 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     delete newProducts[productId];
     setSelectedProducts(newProducts);
   };
+
+  useEffect(() => {
+    const showPopup =
+      selectedProductsArray.length >= 3 &&
+      !hasShownRegisterPopup.current &&
+      !isAuthenticated;
+
+    if (showPopup) {
+      openAuthDialog();
+      hasShownRegisterPopup.current = true;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedProductsArray.length, isAuthenticated]);
 
   return (
     <ProductsContext.Provider
@@ -274,6 +323,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         selectedCountry,
         isListOwner,
         isFetchingList: dbListGroupQuery.isLoading && !!isAuthenticated,
+        handleCheckProduct,
+        countryToUse,
       }}
     >
       {children}
@@ -283,8 +334,14 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
 
 export const useProductsContext = () => useContext(ProductsContext);
 
-const sortWithUpdatedAt = (product: IProduct[]) =>
+const sortWithUpdatedAtAndChecked = (product: IProduct[]) =>
   [...product].sort((a, b) => {
+    if (a.checked && !b.checked) {
+      return 1;
+    } else if (!a.checked && b.checked) {
+      return -1;
+    }
+
     const dateA = new Date(a.createdAt);
     const dateB = new Date(b.createdAt);
 

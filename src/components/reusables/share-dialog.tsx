@@ -74,7 +74,7 @@ export const ShareDialog = ({
     <CustomDialog
       open={open}
       handleClose={handleClose}
-      className="max-w-[350px]"
+      className="max-w-[350px] top-[20%] translate-y-[-20%]"
       bodyClassName="pt-0"
       preventOutsideClose
       dialogHeader="Share"

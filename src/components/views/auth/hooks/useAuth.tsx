@@ -10,8 +10,7 @@ import { useRouter } from "next/router";
 export const useAuth = () => {
   const loginMutation = useAppMutation({ url: API_URLS.LOGIN });
   const signUpMutation = useAppMutation({ url: API_URLS.SIGN_UP });
-  const { handleAuthentication, openAuthDialog: closeAuthDialog } =
-    useAuthContext();
+  const { handleAuthentication, closeAuthDialog } = useAuthContext();
   const router = useRouter();
 
   const alertDialog = useAlertDialog();
@@ -83,7 +82,7 @@ export const useAuth = () => {
     closeAuthDialog();
 
     if (isSignup) {
-      renderAlertDialog({ email: data.email });
+      renderAlertDialog({ email: user.email });
     }
   };
 
@@ -91,6 +90,19 @@ export const useAuth = () => {
     loginMutation.mutate({ email, password } as any, {
       onSuccess: (data) => {
         finalizeLogin({ data: { ...data, email }, isSignup: false });
+      },
+      onError: (data) => {
+        showToast({
+          title: "Invalid Credentials",
+          type: "error",
+        });
+      },
+    });
+  };
+  const socialMediaLogin = ({ code, provider }: TSocialSignup) => {
+    loginMutation.mutate({ code, provider } as any, {
+      onSuccess: (data) => {
+        finalizeLogin({ data: { ...data }, isSignup: false });
       },
       onError: (data) => {
         showToast({
@@ -120,10 +132,15 @@ export const useAuth = () => {
     handleLogin,
     handleSignup,
     signUpMutation,
+    socialMediaLogin,
   };
 };
 
 export type TSignup = {
   email: string;
   password: string;
+};
+export type TSocialSignup = {
+  provider: string;
+  code: string;
 };

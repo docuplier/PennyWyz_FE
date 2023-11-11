@@ -79,10 +79,12 @@ export const NewList = () => {
             {isListOwner && <SearchBar placeholder="New item" />}
           </div>
         </div>
-        <div className="py-[20px] flex flex-col items-center gap-2 justify-center">
-          <InfoItem text="Enter three or more characters to start suggesting" />
-          <InfoItem text="Swipe Right to increase quantity & Left to delete" />
-        </div>
+        {isAuthenticated && (
+          <div className="py-[20px] flex flex-col items-center gap-2 justify-center">
+            <InfoItem text="Enter three or more characters to start suggesting" />
+            <InfoItem text="Swipe Right to increase quantity & Left to delete" />
+          </div>
+        )}
       </AppLayout>
     </>
   );
