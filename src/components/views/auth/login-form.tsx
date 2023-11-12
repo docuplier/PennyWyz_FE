@@ -1,19 +1,15 @@
-import { FacebookLogo } from "#/assets/svgs/facebook-logo";
 import { GoogleLogo } from "#/assets/svgs/google-logo";
 import { CustomInput } from "#/components/reusables/custom-input";
 import { Button } from "#/components/ui/button";
-import { CheckBox } from "#/components/ui/checkbox";
-import { Label } from "#/components/ui/label";
 import { Typography } from "#/components/ui/typography";
 import { useAuthContext } from "#/contexts/auth-context";
-import { ReactNode } from "react";
 import { AuthViewEnums } from "./auth-dialog";
 import { useForm } from "react-hook-form";
 import { TSignup, useAuth } from "./hooks/useAuth";
 import Link from "next/link";
 import { API_URLS } from "#/http/api-urls";
-import { internalAxios } from "#/http/http";
 import { ENV_KEYS } from "#/lib/env-keys";
+import { getWindow } from "#/lib/utils";
 
 export const LoginForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
@@ -98,22 +94,20 @@ export const LoginForm = () => {
 };
 
 export const LoginWithSocial = ({ text = "Login with" }: { text?: string }) => {
-  const getLoginWithGoogle = `${ENV_KEYS.API_URL}/${API_URLS.GOOGLE_LOGIN}`;
+  const openGoogleLogin = () => {
+    const getLoginWithGoogle = `${ENV_KEYS.API_URL}/${API_URLS.GOOGLE_LOGIN}`;
+    getWindow()?.open(getLoginWithGoogle, "_self");
+  };
 
   return (
     <section className="space-y-[32px]">
       <div className="flex items-center justify-between">
         <Typography text={text} />
         <div className="flex items-center gap-[24px]">
-          <a
-            // onClick={() => {
-            //   internalAxios.get(API_URLS.GOOGLE_LOGIN);
-            // }}
-            href={getLoginWithGoogle}
-          >
+          <button onClick={openGoogleLogin}>
             <SocialIcon icon={<GoogleLogo height={38} width={38} />} />
-          </a>
-          <SocialIcon icon={<FacebookLogo height={38} width={38} />} />
+          </button>
+          {/* <SocialIcon icon={<FacebookLogo height={38} width={38} />} /> */}
         </div>
       </div>
       <div className="relative flex items-center justify-center w-full h-full">

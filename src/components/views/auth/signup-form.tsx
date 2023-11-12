@@ -4,12 +4,15 @@ import { CheckBox } from "#/components/ui/checkbox";
 import { Label } from "#/components/ui/label";
 import { Typography } from "#/components/ui/typography";
 import { useAuthContext } from "#/contexts/auth-context";
+import { useState } from "react";
 import { AuthViewEnums } from "./auth-dialog";
 import { TSignup, useAuth } from "./hooks/useAuth";
 import { useForm } from "react-hook-form";
+import { showToast } from "#/lib/toast";
 
 export const SignupForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
+  const [hasAcceptedTerms, setHasAcceptedTerms] = useState(false);
 
   const { signUpMutation, handleSignup } = useAuth();
 
@@ -20,7 +23,11 @@ export const SignupForm = () => {
   } = useForm<TSignup>();
 
   const onSubmit = (data: TSignup) => {
-    handleSignup(data);
+    if (hasAcceptedTerms) {
+      handleSignup(data);
+    } else {
+      showToast({ title: "Please accept terms and conditions", type: "error" });
+    }
   };
 
   return (
@@ -52,7 +59,11 @@ export const SignupForm = () => {
         </Label>
       </div> */}
       <div className="flex items-center gap-2">
-        <CheckBox id="terms" />
+        <CheckBox
+          id="terms"
+          checked={hasAcceptedTerms}
+          onChange={() => setHasAcceptedTerms(!hasAcceptedTerms)}
+        />
         <Label htmlFor="terms" className="text-[12px] font-normal">
           By signing up you agree to our Terms of Use and Privacy Policy.
         </Label>

@@ -188,3 +188,6 @@ export const getRangeFormmater = ({
     ...currencyData,
   })} - ${formatNumberToCurrency({ number: upperRange, ...currencyData })}`;
 };
+
+export const getWindow = () =>
+  typeof window !== "undefined" ? window : undefined;

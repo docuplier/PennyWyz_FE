@@ -15,7 +15,7 @@ export const ListTitle = ({
 }) => {
   const { toggleShareDialog } = useAlertDialog();
   const [value, setValue] = useState(initialValue);
-  const { isAuthenticated } = useAuthContext();
+  const { isAuthenticated, openAuthDialog } = useAuthContext();
 
   const handleKeyDown = (evt: any) => {
     setValue(evt.target.value);
@@ -44,11 +44,14 @@ export const ListTitle = ({
         ) : null}
       </section>
       <section>
-        {isAuthenticated && (
-          <button>
-            <Share2Icon size={20} onClick={toggleShareDialog} />
-          </button>
-        )}
+        <button>
+          <Share2Icon
+            size={20}
+            onClick={() =>
+              isAuthenticated ? toggleShareDialog() : openAuthDialog()
+            }
+          />
+        </button>
       </section>
     </div>
   );

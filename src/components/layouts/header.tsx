@@ -1,7 +1,7 @@
 import { PennyWyzLogo } from "#/assets/svgs/pennywyz-logo";
 import React, { useState } from "react";
 import { Typography } from "../ui/typography";
-import { MenuIcon, User2, UserIcon } from "lucide-react";
+import { MenuIcon, User2, UserCircle, UserIcon } from "lucide-react";
 import { useAuthContext } from "#/contexts/auth-context";
 import { cn } from "#/lib/utils";
 import Link from "next/link";
@@ -107,8 +107,8 @@ const UserProfileDropdown = ({ logoutUser }: { logoutUser: VoidFunction }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="w-[24px] h-[24px] rounded-full flex justify-center items-center bg-pennywyz-yellow-t2">
-          <User2 size={14} strokeWidth={3} />
+        <div className="w-[24px] h-[24px] rounded-full flex justify-center items-center  bg-gradient-to-r  from-pennywyz-green to-pennywyz-yellow-t2">
+          <User2 size={14} strokeWidth={3} color="white" />
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

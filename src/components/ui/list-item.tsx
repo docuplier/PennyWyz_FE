@@ -96,7 +96,9 @@ export const ListItem = ({
                 <CheckBox
                   id={product.id?.toString()}
                   onChange={(e) => {
-                    handleCheckProduct({ productId: product.id?.toString() });
+                    handleCheckProduct({
+                      productId: product.productId?.toString(),
+                    });
                   }}
                   checked={product.checked}
                 />

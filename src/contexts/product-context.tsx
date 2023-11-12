@@ -203,14 +203,14 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         },
       };
       if (hasListGroupId) {
-        await addListItemMutation.mutate(
+        addListItemMutation.mutate(
           {
             quantity: 1,
             productId: parsedProduct.id,
             listId: params.id,
           } as any,
           {
-            onSuccess: () => {
+            onSuccess: (data) => {
               dbListGroupQuery.refetch();
             },
           }
@@ -266,11 +266,20 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   const handleCheckProduct = ({ productId }: { productId: string }) => {
     const newProducts = { ...selectedProducts };
     const selectedProduct = newProducts[productId];
-    if (selectedProduct) {
-      selectedProduct.checked = !selectedProduct.checked;
+
+    const checkValue = selectedProduct.checked ? false : true;
+
+    selectedProduct.checked = checkValue;
+
+    if (hasListGroupId) {
+      updateListItemMutation.mutate({
+        idParams: `/${selectedProduct.listContentId}`,
+        checked: checkValue,
+      } as any);
+    } else {
       addToStore("USER_PRODUCTS", newProducts);
-      setSelectedProducts(newProducts);
     }
+    setSelectedProducts(newProducts);
   };
 
   const handleProductDelete = ({ productId }: { productId: string }) => {

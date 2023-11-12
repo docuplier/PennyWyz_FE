@@ -1,5 +1,7 @@
+import { getWindow } from "./utils";
+
 export class SocialMediaShare {
-  getWindow = () => (typeof window !== "undefined" ? window : undefined);
+  getWindow = () => getWindow();
 
   getPageUrl = (url: string) => {
     return this.getWindow() ? `https://pennywyz.com/${url}` : "";

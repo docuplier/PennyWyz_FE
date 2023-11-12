@@ -21,7 +21,7 @@ export const Hero = ({ isDesktop }: { isDesktop?: boolean }) => {
           <>
             Get
             <span className="font-bold"> real time price updates </span>
-            on over 10,000 items to help you
+            on over 100,000 items to help you
             <span className="font-bold"> plan better </span>
             and
             <span className="font-bold"> shop cheaper</span>
