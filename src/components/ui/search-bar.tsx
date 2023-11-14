@@ -47,7 +47,7 @@ export const SearchBar = ({
   }, [router.asPath]);
 
   return (
-    <div className="sticky bottom-0 z-[100] ">
+    <div className="sticky bottom-0 z-[50] ">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverAnchor asChild>
           <div
@@ -83,7 +83,7 @@ export const SearchBar = ({
           </div>
         </PopoverAnchor>
         <PopoverContent
-          className="max-w-full p-0 -translate-y-2 "
+          className="max-w-full p-0 -translate-y-2 z-[500] "
           style={{ width: `${selectWidth}px` }}
           autoFocus={false}
           onOpenAutoFocus={(e) => {

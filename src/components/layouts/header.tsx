@@ -58,7 +58,7 @@ const Header = ({
           </Link>
         </div>
         <section className="flex items-center gap-2">
-          <div className="z-[200]">
+          <div className="z-[60]">
             <Popover>
               <PopoverTrigger>
                 <CountrySelectButton icon={selectedCountry.icon} />
