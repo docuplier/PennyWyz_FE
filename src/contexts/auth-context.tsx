@@ -96,6 +96,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsAuthenticated(false);
     showToast({ title: "Successfully logged out", type: "error" });
     router.push("/");
+    softReload();
   };
 
   const shouldPerformAuthAction = async ({
