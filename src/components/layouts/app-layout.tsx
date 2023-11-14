@@ -11,12 +11,14 @@ export const AppLayout = ({
   desktopHeader,
   mobileHeader,
   hasBackIcon,
+  hasTopPadding = true,
 }: {
   children: ReactNode;
   className?: string;
   desktopHeader?: ReactNode;
   mobileHeader?: ReactNode;
   hasBackIcon?: boolean;
+  hasTopPadding?: boolean;
 }) => {
   const { width } = useViewportSize();
 
@@ -37,12 +39,14 @@ export const AppLayout = ({
         >
           <div
             className={cn(
-              "bg-white mx-auto w-full  rounded-[24px]  overflow-hidden",
-              isMobile ? "max-w-[700px] pt-[10px]" : "max-w-[450px] py-[24px]"
+              "bg-white mx-auto w-full  rounded-[24px]   white-container  max-h-screen overflow-scroll  ",
+              isMobile
+                ? `max-w-[700px] ${hasTopPadding ? "pt-[10px]" : ""}`
+                : `max-w-[450px] ${hasTopPadding ? "py-[24px]" : "pb-[24px]"} `
             )}
           >
             <div className="max-w-[90%] mx-auto min-h-[260px]">
-              <div className="md:hidden">
+              <div className="sticky top-0 md:hidden z-[500] bg-white">
                 <Header hasBackIcon={hasBackIcon} />
                 {mobileHeader}
               </div>

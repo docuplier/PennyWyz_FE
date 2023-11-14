@@ -200,6 +200,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
           ...parsedProduct,
           quantity: 1,
           productId: parsedProduct.id,
+          createdAt: new Date().toISOString(),
         },
       };
       if (hasListGroupId) {
@@ -220,6 +221,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         setSelectedProducts(newProducts);
       }
     }
+    setSearchValue("");
     setOpen(false);
   };
 
