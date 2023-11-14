@@ -47,7 +47,7 @@ export const SearchBar = ({
   }, [router.asPath]);
 
   return (
-    <div className="sticky bottom-0 z-[200] ">
+    <div className="sticky bottom-0 z-[100] ">
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverAnchor asChild>
           <div

@@ -41,7 +41,7 @@ export const NewList = () => {
   return (
     <>
       <AppLayout hasBackIcon hasTopPadding={false}>
-        <section className="space-y-[20px] mb-[20px] pt-[20px] sticky top-0 z-[200] bg-white">
+        <section className="space-y-[20px] mb-[20px] pt-[20px] sticky top-0 z-[100] bg-white">
           <ListTitle
             initialValue={initalListGroupName}
             key={initalListGroupName}
