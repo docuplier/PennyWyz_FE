@@ -76,6 +76,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     router.pathname
   );
 
+  const isOnPublicListPage = ["/list/public/[id]"].includes(router.pathname);
+
   const listGroupId = acceptedListGroupRoute ? (params?.id as string) : "";
 
   const hasListGroupId = !!listGroupId;
@@ -304,7 +306,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     const showPopup =
       selectedProductsArray.length >= 3 &&
       !hasShownRegisterPopup.current &&
-      !isAuthenticated;
+      !isAuthenticated &&
+      isOnPublicListPage;
 
     if (showPopup) {
       openAuthDialog();
