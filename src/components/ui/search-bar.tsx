@@ -94,7 +94,12 @@ export const SearchBar = ({
         >
           <Command>
             {!concatenatedData.length ? (
-              <CommandEmpty>No product found.</CommandEmpty>
+              <CommandEmpty>
+                <InfoItem
+                  text="Start typing to see product suggestions"
+                  className="justify-center py-2"
+                />
+              </CommandEmpty>
             ) : null}
             {concatenatedData.length ? (
               <CommandGroup className="h-[200px]  overflow-y-scroll ">
