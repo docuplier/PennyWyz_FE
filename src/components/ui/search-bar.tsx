@@ -92,43 +92,41 @@ export const SearchBar = ({
             e.preventDefault();
           }}
         >
-          <Command>
-            {!concatenatedData.length ? (
-              <CommandEmpty>
-                <InfoItem
-                  text="Start typing to see product suggestions"
-                  className="justify-center py-2"
-                />
-              </CommandEmpty>
-            ) : null}
-            {concatenatedData.length ? (
-              <CommandGroup className="h-[200px]  overflow-y-scroll ">
+          <Command className="h-[200px]">
+            <CommandEmpty className="flex items-center justify-center h-full">
+              <InfoItem
+                text="Start typing to see product suggestions"
+                className="justify-center py-2"
+              />
+            </CommandEmpty>
+            <CommandGroup className="overflow-y-scroll ">
+              {concatenatedData.length ? (
                 <InfoItem
                   text="Please scroll to show more"
                   className="justify-center py-2"
                 />
-                {concatenatedData?.map((product, index) => {
-                  const isSelected = !!selectedProducts[product.id];
-                  return (
-                    <CommandItem
-                      key={product.id}
-                      value={product.id?.toString()}
-                      onSelect={() => {
-                        handleSelect(product);
-                      }}
-                      className={cn(
-                        isSelected && "bg-pennywyz-yellow-t2 bg-opacity-50 ",
-                        "text-[12px]"
-                      )}
-                    >
-                      {product.name}
-                    </CommandItem>
-                  );
-                })}
-                <div ref={scrollRef.ref}></div>
-                {isFetchingNextPage && <Loader />}
-              </CommandGroup>
-            ) : null}
+              ) : null}
+              {concatenatedData?.map((product, index) => {
+                const isSelected = !!selectedProducts[product.id];
+                return (
+                  <CommandItem
+                    key={product.id}
+                    value={product.id?.toString()}
+                    onSelect={() => {
+                      handleSelect(product);
+                    }}
+                    className={cn(
+                      isSelected && "bg-pennywyz-yellow-t2 bg-opacity-50 ",
+                      "text-[12px]"
+                    )}
+                  >
+                    {product.name}
+                  </CommandItem>
+                );
+              })}
+              <div ref={scrollRef.ref}></div>
+              {isFetchingNextPage && <Loader />}
+            </CommandGroup>
           </Command>
         </PopoverContent>
       </Popover>

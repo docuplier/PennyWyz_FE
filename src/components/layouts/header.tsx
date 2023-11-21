@@ -92,9 +92,9 @@ const Header = ({
               </button>
             )}
           </CSRWrapper>
-          <button>
+          {/* <button>
             <MenuIcon className="text-pennywyz-yellow-t2" size={24} />
-          </button>
+          </button> */}
         </section>
       </div>
     </>
