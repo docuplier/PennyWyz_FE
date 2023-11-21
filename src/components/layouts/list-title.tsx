@@ -14,7 +14,7 @@ export const ListTitle = ({
   canEdit?: boolean;
 }) => {
   const { toggleShareDialog } = useAlertDialog();
-  const [value, setValue] = useState(initialValue);
+  const [value, setValue] = useState(initialValue ?? "");
   const { isAuthenticated, openAuthDialog } = useAuthContext();
 
   const handleKeyDown = (evt: any) => {

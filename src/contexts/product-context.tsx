@@ -51,6 +51,7 @@ export type ProductsContextType = {
   isFetchingList: boolean;
   handleCheckProduct: ({ productId }: { productId: string }) => void;
   countryToUse: string;
+  isOnPublicListPage: boolean;
 };
 
 const ProductsContext = createContext<ProductsContextType>(
@@ -87,8 +88,6 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
   const [selectedProducts, setSelectedProducts] = React.useState<{
     [key in string]: IProduct;
   }>({});
-  const [initalListGroupName, setInitialListGroupName] =
-    React.useState("Untitled");
 
   const [selectedCountry, setSelectedCountry] =
     React.useState<CountryListProps>(COUNTRY_LIST[0]);
@@ -130,14 +129,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [hasListGroupId, dbListGroupQuery.isFetching, hydrated]);
 
-  useEffect(() => {
-    if (listGroupId) {
-      if (!dbListGroupQuery.isFetching && dbListGroupQuery?.data?.data?.name) {
-        setInitialListGroupName(dbListGroupQuery?.data?.data?.name);
-      }
-    }
-  }, [listGroupId, dbListGroupQuery.isFetching]);
-
+  const initalListGroupName = dbListGroupQuery?.data?.data?.name || "Untitled";
   const [open, setOpen] = React.useState(false);
 
   const selectedProductsArray = useMemo(() => {
@@ -349,6 +341,7 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         isFetchingList: dbListGroupQuery.isLoading && !!isAuthenticated,
         handleCheckProduct,
         countryToUse,
+        isOnPublicListPage,
       }}
     >
       {children}

@@ -22,6 +22,7 @@ export const NewList = () => {
     listGroupId,
     isListOwner,
     isFetchingList,
+    isOnPublicListPage,
   } = useProductsContext();
 
   const { isAuthenticated, authUser } = useAuthContext();
@@ -38,52 +39,59 @@ export const NewList = () => {
     }
   };
 
+  const canEdit = isListOwner && !isOnPublicListPage;
+
   return (
     <>
       <AppLayout hasBackIcon hasTopPadding={false}>
-        <section className="space-y-[20px] mb-[20px] pt-[20px] sticky top-0 z-[50] bg-white">
-          <ListTitle
-            initialValue={initalListGroupName}
-            key={initalListGroupName}
-            handleSaveTitle={(name: string) =>
-              debouncedFunction({ name, listGroupId })
-            }
-            canEdit={isListOwner}
-          />
-          <TotalHeader />
-        </section>
-        {isAuthenticated && !authUser?.isVerified ? (
-          <div>
-            <InfoItemSecondary text="Verify your email to save your list" />
-          </div>
-        ) : null}
-        <div className="w-full">
-          <div className="mt-[10px] space-y-2">
-            <CSRWrapper>
-              <AnimatePresence>
-                {isFetchingList ? (
-                  <Loader className="h-[200px]" />
-                ) : (
-                  selectedProductsArray.map((v) => (
-                    <ListItem
-                      key={v.id}
-                      isExpandedId={isExpandedId}
-                      handleExpansion={handleExpansion}
-                      product={v}
-                      canEdit={isListOwner}
-                    />
-                  ))
-                )}
-              </AnimatePresence>
-            </CSRWrapper>
-            {isListOwner && <SearchBar placeholder="New item" />}
-          </div>
-        </div>
-        {isAuthenticated && (
-          <div className="py-[20px] flex flex-col items-center gap-2 justify-center">
-            <InfoItem text="Enter three or more characters to start suggesting" />
-            <InfoItem text="Swipe Right to increase quantity & Left to delete" />
-          </div>
+        {isFetchingList ? (
+          <Loader className="h-[300px]" />
+        ) : (
+          <>
+            <section className="space-y-[20px] mb-[20px] pt-[20px] sticky top-0 z-[50] bg-white">
+              {
+                <ListTitle
+                  initialValue={initalListGroupName}
+                  handleSaveTitle={(name: string) => {
+                    if (isAuthenticated) {
+                      debouncedFunction({ name, listGroupId });
+                    }
+                  }}
+                  canEdit={canEdit}
+                />
+              }
+              <TotalHeader />
+            </section>
+            {isAuthenticated && !authUser?.isVerified ? (
+              <div>
+                <InfoItemSecondary text="Verify your email to save your list" />
+              </div>
+            ) : null}
+            <div className="w-full">
+              <div className="mt-[10px] space-y-2">
+                <CSRWrapper>
+                  <AnimatePresence>
+                    {selectedProductsArray.map((v) => (
+                      <ListItem
+                        key={v.id}
+                        isExpandedId={isExpandedId}
+                        handleExpansion={handleExpansion}
+                        product={v}
+                        canEdit={canEdit}
+                      />
+                    ))}
+                  </AnimatePresence>
+                </CSRWrapper>
+                {canEdit ? <SearchBar placeholder="New item" /> : null}
+              </div>
+            </div>
+            {canEdit ? (
+              <div className="py-[20px] flex flex-col items-center gap-2 justify-center">
+                <InfoItem text="Enter three or more characters to start suggesting" />
+                <InfoItem text="Swipe Right to increase quantity & Left to delete" />
+              </div>
+            ) : null}
+          </>
         )}
       </AppLayout>
     </>
