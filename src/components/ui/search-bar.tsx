@@ -92,7 +92,9 @@ export const SearchBar = ({
             e.preventDefault();
           }}
         >
-          <Command className="h-[200px]">
+          <Command
+            className={cn(concatenatedData.length ? "h-[200px]" : "h-[100px]")}
+          >
             <CommandEmpty className="flex items-center justify-center h-full">
               <InfoItem
                 text="Start typing to see product suggestions"
