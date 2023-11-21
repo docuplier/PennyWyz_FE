@@ -1,10 +1,17 @@
 import { Info } from "lucide-react";
 import { Typography } from "../ui/typography";
 import { ReactNode } from "react";
+import { cn } from "#/lib/utils";
 
-export const InfoItem = ({ text }: { text: string | ReactNode }) => {
+export const InfoItem = ({
+  text,
+  className,
+}: {
+  text: string | ReactNode;
+  className?: string;
+}) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className={cn("flex items-center gap-2", className)}>
       <Info size={16} className="text-blue-500" />
       <Typography text={text} className="text-pennywyz-ash-t2" size={12} />
     </div>

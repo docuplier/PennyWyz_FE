@@ -16,7 +16,7 @@ export const useGetProducts = ({
   const query = useInfiniteFetch<IProduct>({
     url: API_URLS.GET_PRODUCTS({ search, country }),
     enabled: enabled ? true : false,
-    pageSize: 6,
+    pageSize: 7,
   });
 
   return query;
