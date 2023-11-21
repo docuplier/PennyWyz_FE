@@ -13,7 +13,7 @@
     "isolatedModules": true,
     "jsx": "preserve",
     "incremental": true,
-    "types": ["./src/@types"],
+    "types": ["./src/@types/custom.d.ts"],
     "paths": {
       "#/*": ["./src/*"]
     }
