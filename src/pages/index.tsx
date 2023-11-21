@@ -6,6 +6,7 @@ import { useListGroup } from "#/components/views/all-lists/hooks/useListGroup";
 import { useRouter } from "next/router";
 import { NotAccessibleToAuthUsers } from "#/components/layouts/protectected-route";
 import { Fragment } from "react";
+import useReactGA from "#/http/hooks/useReactGA";
 
 export default function Home({
   accessibleToAuthUsers = false,
@@ -15,6 +16,8 @@ export default function Home({
   const { isAuthenticated } = useAuthContext();
   const { creatNewListGroup } = useListGroup();
   const router = useRouter();
+
+  const { eventTrack } = useReactGA();
 
   const Wrapper = accessibleToAuthUsers ? Fragment : NotAccessibleToAuthUsers;
 
@@ -31,6 +34,13 @@ export default function Home({
         <div className="w-full">
           <SearchBar
             navigationAction={() => {
+              eventTrack({
+                category: "LIST",
+                label: "LIST_CREATED",
+                action: isAuthenticated
+                  ? "An auth user created a list"
+                  : "A guest created a list",
+              });
               if (isAuthenticated) {
                 creatNewListGroup();
               } else {

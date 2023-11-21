@@ -28,7 +28,7 @@ export const usePaginatedFetch = <T>({
     },
     {
       getNextPageParam: (lastPage) => {
-        if (lastPage?.data?.length >= PAGE_SIZE) {
+        if (lastPage?.data?.length >= newPageSize) {
           return (currenPageRef.current = currenPageRef.current + 1);
         }
       },

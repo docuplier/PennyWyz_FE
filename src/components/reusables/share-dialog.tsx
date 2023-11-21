@@ -22,6 +22,7 @@ import { TextDivider } from "../ui/text-divider";
 import { useParams } from "next/navigation";
 import { useAppMutation } from "#/http";
 import { API_URLS } from "#/http/api-urls";
+import useReactGA from "#/http/hooks/useReactGA";
 
 const sms = new SocialMediaShare();
 
@@ -37,6 +38,8 @@ export const ShareDialog = ({
   const url = sms.getPageUrl(`list/public/${params?.id}`);
 
   const { copy } = useClipboard();
+
+  const { eventTrack } = useReactGA();
 
   const shareViaEmailMutation = useAppMutation({
     url: API_URLS.SEND_LIST_INITIAL,
@@ -59,6 +62,11 @@ export const ShareDialog = ({
         } as any,
         {
           onSuccess: () => {
+            eventTrack({
+              category: "SHARING",
+              label: "SHARE_LIST",
+              action: "User shared list via email",
+            });
             reset();
             showToast({ title: "List successfully shared" });
           },
@@ -108,27 +116,52 @@ export const ShareDialog = ({
           <div className="flex gap-[6px]">
             <ShareIconButton
               icon={<TwitterIcon />}
-              onClick={() =>
+              onClick={() => {
+                eventTrack({
+                  category: "SHARING",
+                  label: "SHARE_LIST",
+                  action: "User shared list via twitter",
+                });
                 sms.twitter({
                   text: "Check this list I created easily with pennywyz",
                   url,
-                })
-              }
+                });
+              }}
             />
             <ShareIconButton icon={<InstagramIcon />} />
             <ShareIconButton
               icon={<FacebookIcon />}
-              onClick={() => sms.facebook({ url })}
+              onClick={() => {
+                eventTrack({
+                  category: "SHARING",
+                  label: "SHARE_LIST",
+                  action: "User shared list via facebook",
+                });
+                sms.facebook({ url });
+              }}
             />
             <ShareIconButton
               icon={<LinkedinIcon />}
-              onClick={() =>
-                sms.linkedIn({ text: "Hey there", url: "https://pennywyz.com" })
-              }
+              onClick={() => {
+                eventTrack({
+                  category: "SHARING",
+                  label: "SHARE_LIST",
+                  action: "User shared list via linkedin",
+                });
+                sms.linkedIn({
+                  text: "Hey there",
+                  url: "https://pennywyz.com",
+                });
+              }}
             />
             <ShareIconButton
               icon={<CopyIcon />}
               onClick={() => {
+                eventTrack({
+                  category: "SHARING",
+                  label: "SHARE_LIST",
+                  action: "User copied link to share",
+                });
                 copy(url);
                 showToast({ title: "Link successfully copied" });
               }}

@@ -16,6 +16,7 @@ import { formatNumberToCurrency, getRangeFormmater } from "#/lib/utils";
 import { useRouter } from "next/router";
 import { useAuthContext } from "./auth-context";
 import { useDebouncedValue } from "@mantine/hooks";
+import useReactGA from "#/http/hooks/useReactGA";
 
 export type ProductsContextType = {
   handleSearchValue: (search: string) => void;
@@ -91,6 +92,8 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
 
   const [selectedCountry, setSelectedCountry] =
     React.useState<CountryListProps>(COUNTRY_LIST[0]);
+
+  const { eventTrack } = useReactGA();
 
   const {
     getDbListQuery,
@@ -222,6 +225,13 @@ export function ProductsProvider({ children }: { children: ReactNode }) {
         addToStore("USER_PRODUCTS", newProducts);
         setSelectedProducts(newProducts);
       }
+      eventTrack({
+        category: "LIST",
+        label: "PRODUCT_ADDED",
+        action: hasListGroupId
+          ? `Added ${parsedProduct.name} to List:${listGroupId}`
+          : `Added ${parsedProduct.name} to List`,
+      });
     }
     setSearchValue("");
     setOpen(false);

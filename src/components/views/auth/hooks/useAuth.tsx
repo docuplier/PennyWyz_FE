@@ -3,6 +3,7 @@ import { useAlertDialog } from "#/contexts/alert-dialog-context";
 import { useAuthContext } from "#/contexts/auth-context";
 import { useAppMutation } from "#/http";
 import { API_URLS } from "#/http/api-urls";
+import useReactGA from "#/http/hooks/useReactGA";
 import { showToast } from "#/lib/toast";
 import { getDecodedToken } from "#/lib/utils";
 import { useRouter } from "next/router";
@@ -12,6 +13,7 @@ export const useAuth = () => {
   const signUpMutation = useAppMutation({ url: API_URLS.SIGN_UP });
   const { handleAuthentication, closeAuthDialog } = useAuthContext();
   const router = useRouter();
+  const { eventTrack } = useReactGA();
 
   const alertDialog = useAlertDialog();
 
@@ -102,6 +104,11 @@ export const useAuth = () => {
   const socialMediaLogin = ({ code, provider }: TSocialSignup) => {
     loginMutation.mutate({ code, provider } as any, {
       onSuccess: (data) => {
+        eventTrack({
+          category: "SIGNUP",
+          label: "SIGNUP",
+          action: "User signed up",
+        });
         finalizeLogin({ data: { ...data }, isSignup: false });
       },
       onError: (data) => {

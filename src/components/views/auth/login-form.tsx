@@ -10,6 +10,7 @@ import Link from "next/link";
 import { API_URLS } from "#/http/api-urls";
 import { ENV_KEYS } from "#/lib/env-keys";
 import { getWindow } from "#/lib/utils";
+import useReactGA from "#/http/hooks/useReactGA";
 
 export const LoginForm = () => {
   const { navigateToAuthRoute } = useAuthContext();
@@ -94,7 +95,13 @@ export const LoginForm = () => {
 };
 
 export const LoginWithSocial = ({ text = "Login with" }: { text?: string }) => {
+  const { eventTrack } = useReactGA();
   const openGoogleLogin = () => {
+    eventTrack({
+      category: "SOCIAL_MEDIA_LOGIN",
+      label: "SOCIAL_MEDIA_LOGIN",
+      action: "User signed in or signed up using google auth",
+    });
     const getLoginWithGoogle = `${ENV_KEYS.API_URL}/${API_URLS.GOOGLE_LOGIN}`;
     getWindow()?.open(getLoginWithGoogle, "_self");
   };

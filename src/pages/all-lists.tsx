@@ -7,10 +7,16 @@ import { SwipeableCard } from "#/components/ui/swipeable-card";
 import { ListGroupContainer } from "#/components/views/all-lists/list-group-container";
 import { useListGroup } from "#/components/views/all-lists/hooks/useListGroup";
 import { ProtectedRoute } from "#/components/layouts/protectected-route";
+import useReactGA from "#/http/hooks/useReactGA";
+import { useAuthContext } from "#/contexts/auth-context";
 
 export default function AllLists() {
   const { creatNewListGroup, listGroup, handleDeleteListGroup } =
     useListGroup();
+
+  const { isAuthenticated } = useAuthContext();
+
+  const { eventTrack } = useReactGA();
 
   return (
     <>
@@ -32,7 +38,16 @@ export default function AllLists() {
               />
               <SearchBar
                 placeholder="New List"
-                navigationAction={creatNewListGroup}
+                navigationAction={() => {
+                  eventTrack({
+                    category: "LIST",
+                    label: "LIST_CREATED",
+                    action: isAuthenticated
+                      ? "An auth user created a list"
+                      : "A guest created a list",
+                  });
+                  creatNewListGroup();
+                }}
               />
             </div>
           </div>

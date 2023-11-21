@@ -13,6 +13,7 @@ import { Check, PlusIcon } from "lucide-react";
 import { PopoverAnchor } from "@radix-ui/react-popover";
 import { useRouter } from "next/router";
 import { useProductsContext } from "#/contexts/product-context";
+import { Loader } from "../reusables/loader";
 
 export const SearchBar = ({
   navigationPath,
@@ -92,26 +93,27 @@ export const SearchBar = ({
         >
           <Command>
             <CommandEmpty>No product found.</CommandEmpty>
-            <CommandGroup className="max-h-[300px] !h-full overflow-y-scroll ">
-              {concatenatedData?.map((product, index) => (
-                <CommandItem
-                  key={product.id}
-                  value={product.id?.toString()}
-                  onSelect={() => {
-                    handleSelect(product);
-                  }}
-                >
-                  <Check
+            <CommandGroup className="max-h-[150px] !h-full overflow-y-scroll ">
+              {concatenatedData?.map((product, index) => {
+                const isSelected = !!selectedProducts[product.id];
+                return (
+                  <CommandItem
+                    key={product.id}
+                    value={product.id?.toString()}
+                    onSelect={() => {
+                      handleSelect(product);
+                    }}
                     className={cn(
-                      "mr-2 h-4 w-4",
-                      selectedProducts[product.id] ? "opacity-100" : "opacity-0"
+                      isSelected && "bg-pennywyz-yellow-t2 bg-opacity-50 ",
+                      "text-[12px]"
                     )}
-                  />
-                  {product.name}
-                </CommandItem>
-              ))}
+                  >
+                    {product.name}
+                  </CommandItem>
+                );
+              })}
               <div ref={scrollRef.ref}></div>
-              {isFetchingNextPage && "Loading..."}
+              {isFetchingNextPage && <Loader />}
             </CommandGroup>
           </Command>
         </PopoverContent>

@@ -11,12 +11,18 @@ import type { AppProps } from "next/app";
 import { Nunito } from "next/font/google";
 import { ToastContainer } from "react-toastify";
 import { AlertDialogProvider } from "#/contexts/alert-dialog-context";
+import Script from "next/script";
 
 const font = Nunito({ subsets: ["latin"] });
 
 export default function App({ Component, pageProps }: AppProps) {
   return (
     <>
+      <Script
+        strategy="lazyOnload"
+        src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS}`}
+      />
+
       <SeoTag title="Home" />
       <ToastContainer
         icon
